@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torchvision
 
+
 # Define a Residual block
 class residual_block(nn.Module):
     """
@@ -10,20 +11,23 @@ class residual_block(nn.Module):
     def __init__(self, in_channels, out_channels, n_groups = 8):
         super().__init__()
         # First convolution layer
-        self.first_conv = nn.Conv2d(in_channels = in_channels, out_channels = out_channels, kernel_size = 3, padding = 1)
+        self.first_conv = nn.Conv3d(in_channels = in_channels, out_channels = out_channels, kernel_size = 3, padding = 1, bias=False)
         self.first_norm = nn.GroupNorm(num_groups = n_groups, num_channels = out_channels)
         self.act1 = nn.SiLU() # Swish activation function
 
         # Second convolution layer
-        self.second_conv = nn.Conv2d(in_channels = out_channels, out_channels = out_channels, kernel_size = 3, padding = 1)
+        self.second_conv = nn.Conv3d(in_channels = out_channels, out_channels = out_channels, kernel_size = 3, padding = 1, bias = False)
         self.second_norm = nn.GroupNorm(num_groups = n_groups, num_channels = out_channels)
         self.act2 = nn.SiLU() # Swish activation function
+
+        # Add dropout to the residual block
+        self.dropout = nn.Dropout3d(p = 0.2)
 
         # If the number of input channels is not equal to the number of output channels,
         # then use a 1X1 convolution layer to compensate for the difference in dimensions
         # This allows the input to have the same dimensions as the output of the residual block
         if in_channels != out_channels:
-            self.shortcut = nn.Conv2d(in_channels = in_channels, out_channels = out_channels, kernel_size = 1)
+            self.shortcut = nn.Conv3d(in_channels = in_channels, out_channels = out_channels, kernel_size = 1, padding = 0, bias = False)
         else:
             # Pass the input as is
             self.shortcut = nn.Identity()
@@ -39,6 +43,10 @@ class residual_block(nn.Module):
         # Pass the output of the first convolution layer through the second convolution layer
         x = self.act2(self.second_norm(self.second_conv(x)))
 
+        # Add dropout
+        x = self.dropout(x)
+
+
         # Add the input to the output of the second convolution layer
         # This is the skip connection
         x = x + self.shortcut(input)
@@ -48,7 +56,7 @@ class residual_block(nn.Module):
 class down_sample(nn.Module):
     def __init__(self):
         super().__init__()
-        self.max_pool = nn.MaxPool2d(kernel_size = 2, stride = 2)
+        self.max_pool = nn.MaxPool3d(kernel_size = 2, stride = 2)
 
     # Pass the input through the downsample block
     def forward(self, x):
@@ -61,7 +69,7 @@ class up_sample(nn.Module):
         super().__init__()
 
         # Convolution transpose layer to upsample the input
-        self.up_sample = nn.ConvTranspose2d(in_channels = in_channels, out_channels = out_channels, kernel_size = 2, stride = 2)
+        self.up_sample = nn.ConvTranspose3d(in_channels = in_channels, out_channels = out_channels, kernel_size = 2, stride = 2, bias = False)
 
     # Pass the input through the upsample block
     def forward(self, x):
@@ -72,7 +80,10 @@ class up_sample(nn.Module):
 class crop_and_concatenate(nn.Module):
     def forward(self, upsampled, bypass):
         # Crop the upsampled feature map to match the dimensions of the bypass feature map
-        upsampled = torchvision.transforms.functional.resize(upsampled, size = bypass.shape[2:], antialias=True)
+        if upsampled.shape[2:] != bypass.shape[2:]:
+            upsampled = nn.Upsample(size = bypass.shape[2:], mode="trilinear", align_corners=True)(upsampled)
+
+        #upsampled = torchvision.transforms.functional.resize(upsampled, size = bypass.shape[2:], antialias=True)
         x = torch.cat([upsampled, bypass], dim = 1) # Concatenate along the channel dimension
         return x
 
@@ -91,12 +102,12 @@ class attention_block(nn.Module):
         #self.W_g_act = nn.SiLU() # Swish activation function
 
         # Implement W_x i.e the convolution layer that operates on the skip connection
-        self.W_x = nn.Conv2d(in_channels = skip_channels, out_channels = inter_channels, kernel_size = 1)
+        self.W_x = nn.Conv3d(in_channels = skip_channels, out_channels = inter_channels, kernel_size = 1, padding = 0, bias = False)
         #self.W_x_norm = nn.GroupNorm(num_groups = n_groups, num_channels = inter_channels)
         #self.W_x_act = nn.SiLU() # Swish activation function
 
         # Implement phi i.e the convolution layer that operates on the output of W_x + W_g
-        self.phi = nn.Conv2d(in_channels = inter_channels, out_channels = 1, kernel_size = 1)
+        self.phi = nn.Conv3d(in_channels = inter_channels, out_channels = 1, kernel_size = 1, padding = 0, bias = False)
         #self.phi_norm = nn.GroupNorm(num_groups = n_groups, num_channels = 1)
         #self.phi_act = nn.SiLU() # Swish activation function
 
@@ -114,7 +125,8 @@ class attention_block(nn.Module):
         gate_signal = self.W_g(gate_signal)
         # Ensure that the sizes of the skip connection and the gate signal match before addition
         if gate_signal.shape[2:] != skip_connection.shape[2:]:
-            gate_signal = torchvision.transforms.functional.resize(gate_signal, size = skip_connection.shape[2:], antialias=True)
+            gate_signal = nn.Upsample(size = skip_connection.shape[2:], mode="trilinear", align_corners=True)(gate_signal)
+            #gate_signal = torchvision.transforms.functional.resize(gate_signal, size = skip_connection.shape[2:], antialias=True)
         # Project to the intermediate channels
         gate_signal = self.W_x(gate_signal)
 
@@ -134,14 +146,14 @@ class attention_block(nn.Module):
         # Perform element-wise multiplication
         skip_connection = torch.mul(skip_connection, attention_map)
 
-        skip_connection = nn.Conv2d(in_channels = skip_connection.shape[1], out_channels = skip_connection.shape[1], kernel_size = 1)(skip_connection)
+        skip_connection = nn.Conv3d(in_channels = skip_connection.shape[1], out_channels = skip_connection.shape[1], kernel_size = 1, bias=False).to(device)(skip_connection)
         skip_connection = self.act(self.final_norm(skip_connection))
 
         return skip_connection
 
 
-## Implement a residual attention U-Net
-class ResidualAttentionUnet(nn.Module):
+## Implement a 3D residual attention U-Net
+class ResidualAttention3DUnet(nn.Module):
     def __init__(self, in_channels, out_channels, n_groups = 4, n_channels = [64, 128, 256, 512, 1024]):
         super().__init__()
 
@@ -171,7 +183,7 @@ class ResidualAttentionUnet(nn.Module):
         # Final 1X1 convolution layer to produce the output segmentation map:
         # The primary purpose of 1x1 convolutions is to transform the channel dimension of the feature map,
         # while leaving the spatial dimensions unchanged.
-        self.final_conv = nn.Conv2d(in_channels = n_channels[0] , out_channels = out_channels, kernel_size = 1)
+        self.final_conv = nn.Conv3d(in_channels = n_channels[0] , out_channels = out_channels, kernel_size = 1, padding = 0, bias = False)
 
     # Pass the input through the residual attention U-Net
     def forward(self, x):
@@ -192,7 +204,6 @@ class ResidualAttentionUnet(nn.Module):
         skip_connections.append(x)
 
         # Attention on the residual connections
-        #skip_connections = skip_connections[::-1]
         n = len(skip_connections)
         indices = [(n - 1 - i, n - 2 - i) for i in range(n - 1)]
         attentions = []
@@ -213,11 +224,11 @@ class ResidualAttentionUnet(nn.Module):
         # Pass the output of the expanding path through the final convolution layer
         x = self.final_conv(x)
         return x
+    
 
-
-        ## Sanity check
+    # Test if 3d U-Net works
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = ResidualAttentionUnet(in_channels = 3, out_channels = 1).to(device)
-x = torch.randn((1, 3, 32, 32)).to(device)
+model = ResidualAttention3DUnet(in_channels = 1, out_channels = 1).to(device)
+x = torch.randn(1, 1, 25, 320, 320).to(device)
 mask = model(x)
 mask.shape
