@@ -1,0 +1,439 @@
+
+Epoch 1 average loss: 0.8013
+--------------------
+Epoch 2 / 100
+
+Epoch 2 average loss: 0.6239
+--------------------
+Epoch 3 / 100
+
+Epoch 3 average loss: 0.4994
+--------------------
+Epoch 4 / 100
+
+Epoch 4 average loss: 0.4036
+--------------------
+Epoch 5 / 100
+
+Epoch 5 average loss: 0.3613
+--------------------
+Epoch 6 / 100
+
+Epoch 6 average loss: 0.3239
+--------------------
+Epoch 7 / 100
+
+Epoch 7 average loss: 0.3021
+--------------------
+Epoch 8 / 100
+
+Epoch 8 average loss: 0.2810
+--------------------
+Epoch 9 / 100
+
+Epoch 9 average loss: 0.2706
+--------------------
+Epoch 10 / 100
+
+Epoch 10 average loss: 0.2581
+saved new best metric model
+
+Current epoch: 10 current mean dice: 0.7391
+Best mean dice: 0.7391 at epoch: 10
+--------------------
+Epoch 11 / 100
+
+Epoch 11 average loss: 0.2517
+--------------------
+Epoch 12 / 100
+
+Epoch 12 average loss: 0.2439
+--------------------
+Epoch 13 / 100
+
+Epoch 13 average loss: 0.2348
+--------------------
+Epoch 14 / 100
+
+Epoch 14 average loss: 0.2292
+--------------------
+Epoch 15 / 100
+
+Epoch 15 average loss: 0.2259
+--------------------
+Epoch 16 / 100
+
+Epoch 16 average loss: 0.2186
+--------------------
+Epoch 17 / 100
+
+Epoch 17 average loss: 0.2162
+--------------------
+Epoch 18 / 100
+
+Epoch 18 average loss: 0.2130
+--------------------
+Epoch 19 / 100
+
+Epoch 19 average loss: 0.2128
+--------------------
+Epoch 20 / 100
+
+Epoch 20 average loss: 0.2065
+saved new best metric model
+
+Current epoch: 20 current mean dice: 0.7801
+Best mean dice: 0.7801 at epoch: 20
+--------------------
+Epoch 21 / 100
+
+Epoch 21 average loss: 0.2028
+--------------------
+Epoch 22 / 100
+
+Epoch 22 average loss: 0.2016
+--------------------
+Epoch 23 / 100
+
+Epoch 23 average loss: 0.1999
+--------------------
+Epoch 24 / 100
+
+Epoch 24 average loss: 0.1960
+--------------------
+Epoch 25 / 100
+
+Epoch 25 average loss: 0.1924
+--------------------
+Epoch 26 / 100
+
+Epoch 26 average loss: 0.1907
+--------------------
+Epoch 27 / 100
+
+Epoch 27 average loss: 0.1894
+--------------------
+Epoch 28 / 100
+
+Epoch 28 average loss: 0.1875
+--------------------
+Epoch 29 / 100
+
+Epoch 29 average loss: 0.1860
+--------------------
+Epoch 30 / 100
+
+Epoch 30 average loss: 0.1852
+saved new best metric model
+
+Current epoch: 30 current mean dice: 0.8013
+Best mean dice: 0.8013 at epoch: 30
+--------------------
+Epoch 31 / 100
+
+Epoch 31 average loss: 0.1849
+--------------------
+Epoch 32 / 100
+
+Epoch 32 average loss: 0.1818
+--------------------
+Epoch 33 / 100
+
+Epoch 33 average loss: 0.1784
+--------------------
+Epoch 34 / 100
+
+Epoch 34 average loss: 0.1780
+--------------------
+Epoch 35 / 100
+
+Epoch 35 average loss: 0.1769
+--------------------
+Epoch 36 / 100
+
+Epoch 36 average loss: 0.1737
+--------------------
+Epoch 37 / 100
+
+Epoch 37 average loss: 0.1769
+--------------------
+Epoch 38 / 100
+
+Epoch 38 average loss: 0.1735
+--------------------
+Epoch 39 / 100
+
+Epoch 39 average loss: 0.1719
+--------------------
+Epoch 40 / 100
+
+Epoch 40 average loss: 0.1694
+saved new best metric model
+
+Current epoch: 40 current mean dice: 0.8099
+Best mean dice: 0.8099 at epoch: 40
+--------------------
+Epoch 41 / 100
+
+Epoch 41 average loss: 0.1701
+--------------------
+Epoch 42 / 100
+
+Epoch 42 average loss: 0.1693
+--------------------
+Epoch 43 / 100
+
+Epoch 43 average loss: 0.1672
+--------------------
+Epoch 44 / 100
+
+Epoch 44 average loss: 0.1669
+--------------------
+Epoch 45 / 100
+
+Epoch 45 average loss: 0.1643
+--------------------
+Epoch 46 / 100
+
+Epoch 46 average loss: 0.1634
+--------------------
+Epoch 47 / 100
+
+Epoch 47 average loss: 0.1642
+--------------------
+Epoch 48 / 100
+
+Epoch 48 average loss: 0.1633
+--------------------
+Epoch 49 / 100
+
+Epoch 49 average loss: 0.1632
+--------------------
+Epoch 50 / 100
+
+Epoch 50 average loss: 0.1604
+saved new best metric model
+
+Current epoch: 50 current mean dice: 0.8124
+Best mean dice: 0.8124 at epoch: 50
+--------------------
+Epoch 51 / 100
+
+Epoch 51 average loss: 0.1601
+--------------------
+Epoch 52 / 100
+
+Epoch 52 average loss: 0.1584
+--------------------
+Epoch 53 / 100
+
+Epoch 53 average loss: 0.1581
+--------------------
+Epoch 54 / 100
+
+Epoch 54 average loss: 0.1567
+--------------------
+Epoch 55 / 100
+
+Epoch 55 average loss: 0.1565
+--------------------
+Epoch 56 / 100
+
+Epoch 56 average loss: 0.1557
+--------------------
+Epoch 57 / 100
+
+Epoch 57 average loss: 0.1556
+--------------------
+Epoch 58 / 100
+
+Epoch 58 average loss: 0.1550
+--------------------
+Epoch 59 / 100
+
+Epoch 59 average loss: 0.1544
+--------------------
+Epoch 60 / 100
+
+Epoch 60 average loss: 0.1537
+saved new best metric model
+
+Current epoch: 60 current mean dice: 0.8193
+Best mean dice: 0.8193 at epoch: 60
+--------------------
+Epoch 61 / 100
+
+Epoch 61 average loss: 0.1531
+--------------------
+Epoch 62 / 100
+
+Epoch 62 average loss: 0.1529
+--------------------
+Epoch 63 / 100
+
+Epoch 63 average loss: 0.1518
+--------------------
+Epoch 64 / 100
+
+Epoch 64 average loss: 0.1506
+--------------------
+Epoch 65 / 100
+
+Epoch 65 average loss: 0.1490
+--------------------
+Epoch 66 / 100
+
+Epoch 66 average loss: 0.1502
+--------------------
+Epoch 67 / 100
+
+Epoch 67 average loss: 0.1478
+--------------------
+Epoch 68 / 100
+
+Epoch 68 average loss: 0.1484
+--------------------
+Epoch 69 / 100
+
+Epoch 69 average loss: 0.1474
+--------------------
+Epoch 70 / 100
+
+Epoch 70 average loss: 0.1469
+saved new best metric model
+
+Current epoch: 70 current mean dice: 0.8224
+Best mean dice: 0.8224 at epoch: 70
+--------------------
+Epoch 71 / 100
+
+Epoch 71 average loss: 0.1454
+--------------------
+Epoch 72 / 100
+
+Epoch 72 average loss: 0.1462
+--------------------
+Epoch 73 / 100
+
+Epoch 73 average loss: 0.1451
+--------------------
+Epoch 74 / 100
+
+Epoch 74 average loss: 0.1451
+--------------------
+Epoch 75 / 100
+
+Epoch 75 average loss: 0.1440
+--------------------
+Epoch 76 / 100
+
+Epoch 76 average loss: 0.1432
+--------------------
+Epoch 77 / 100
+
+Epoch 77 average loss: 0.1434
+--------------------
+Epoch 78 / 100
+
+Epoch 78 average loss: 0.1434
+--------------------
+Epoch 79 / 100
+
+Epoch 79 average loss: 0.1425
+--------------------
+Epoch 80 / 100
+
+Epoch 80 average loss: 0.1427
+saved new best metric model
+
+Current epoch: 80 current mean dice: 0.8252
+Best mean dice: 0.8252 at epoch: 80
+--------------------
+Epoch 81 / 100
+
+Epoch 81 average loss: 0.1432
+--------------------
+Epoch 82 / 100
+
+Epoch 82 average loss: 0.1422
+--------------------
+Epoch 83 / 100
+
+Epoch 83 average loss: 0.1420
+--------------------
+Epoch 84 / 100
+
+Epoch 84 average loss: 0.1420
+--------------------
+Epoch 85 / 100
+
+Epoch 85 average loss: 0.1411
+--------------------
+Epoch 86 / 100
+
+Epoch 86 average loss: 0.1403
+--------------------
+Epoch 87 / 100
+
+Epoch 87 average loss: 0.1402
+--------------------
+Epoch 88 / 100
+
+Epoch 88 average loss: 0.1403
+--------------------
+Epoch 89 / 100
+
+Epoch 89 average loss: 0.1396
+--------------------
+Epoch 90 / 100
+
+Epoch 90 average loss: 0.1398
+saved new best metric model
+
+Current epoch: 90 current mean dice: 0.8263
+Best mean dice: 0.8263 at epoch: 90
+--------------------
+Epoch 91 / 100
+
+Epoch 91 average loss: 0.1399
+--------------------
+Epoch 92 / 100
+
+Epoch 92 average loss: 0.1393
+--------------------
+Epoch 93 / 100
+
+Epoch 93 average loss: 0.1398
+--------------------
+Epoch 94 / 100
+
+Epoch 94 average loss: 0.1401
+--------------------
+Epoch 95 / 100
+
+Epoch 95 average loss: 0.1398
+--------------------
+Epoch 96 / 100
+
+Epoch 96 average loss: 0.1392
+--------------------
+Epoch 97 / 100
+
+Epoch 97 average loss: 0.1390
+--------------------
+Epoch 98 / 100
+
+Epoch 98 average loss: 0.1389
+--------------------
+Epoch 99 / 100
+
+Epoch 99 average loss: 0.1384
+--------------------
+Epoch 100 / 100
+
+Epoch 100 average loss: 0.1389
+saved new best metric model
+
+Current epoch: 100 current mean dice: 0.8270
+Best mean dice: 0.8270 at epoch: 100
+Done training! Best mean dice: 0.8270 at epoch: 100
