@@ -152,83 +152,110 @@ class attention_block(nn.Module):
         return skip_connection
 
 
-## Implement a 3D residual attention U-Net
-class ResidualAttention3DUnet(nn.Module):
-    def __init__(self, in_channels, out_channels, n_groups = 4, n_channels = [64, 128, 256, 512, 1024]):
+## Implement a MTL 3D residual attention U-Net
+class MTLResidualAttention3DUnet(nn.Module):
+    def __init__(self, in_channels, out_channels, n_groups = 4, n_channels = [16, 32, 64, 128, 256]):
         super().__init__()
 
         # Define the contracting path: residual blocks followed by downsampling
         self.down_conv = nn.ModuleList(residual_block(in_chans, out_chans) for in_chans, out_chans in
                                        [(in_channels, n_channels[0]), (n_channels[0], n_channels[1]), (n_channels[1], n_channels[2]), (n_channels[2], n_channels[3])])
-        self.down_samples = nn.ModuleList(down_sample() for _ in range(4))
+        self.down_samples = nn.ModuleList(down_sample() for _ in range(len(n_channels) - 1))
 
         # Define the bottleneck residual block
         self.bottleneck = residual_block(n_channels[3], n_channels[4])
 
-
+        ## ------ Decoder block for the segmentation task ------ ##
         # Define the attention blocks
         self.attention_blocks = nn.ModuleList(attention_block(skip_channels = residuals_chans, gate_channels = gate_chans) for gate_chans, residuals_chans in
                                               [(n_channels[4], n_channels[3]), (n_channels[3], n_channels[2]), (n_channels[2], n_channels[1]), (n_channels[1], n_channels[0])])
-
+        
 
         # Define the expanding path: upsample blocks, followed by crop and concatenate, followed by residual blocks
         self.upsamples = nn.ModuleList(up_sample(in_chans, out_chans) for in_chans, out_chans in
                                        [(n_channels[4], n_channels[3]), (n_channels[3], n_channels[2]), (n_channels[2], n_channels[1]), (n_channels[1], n_channels[0])])
         
-        self.concat = nn.ModuleList(crop_and_concatenate() for _ in range(4))
+        self.concat = nn.ModuleList(crop_and_concatenate() for _ in range(len(n_channels) - 1))
 
         self.up_conv = nn.ModuleList(residual_block(in_chans, out_chans) for in_chans, out_chans in
                                      [(n_channels[4], n_channels[3]), (n_channels[3], n_channels[2]), (n_channels[2], n_channels[1]), (n_channels[1], n_channels[0])])
         
+        
         # Final 1X1 convolution layer to produce the output segmentation map:
         # The primary purpose of 1x1 convolutions is to transform the channel dimension of the feature map,
         # while leaving the spatial dimensions unchanged.
-        self.final_conv = nn.Conv3d(in_channels = n_channels[0] , out_channels = out_channels, kernel_size = 1, padding = 0, bias = False)
+        self.final_conv = nn.Conv3d(in_channels = n_channels[0], out_channels = out_channels, kernel_size = 1, padding = 0, bias = False)
+
+        ## --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ##
+        ###** Add second decoder path for image reconstruction **###
+        self.attention_blocks_recon = nn.ModuleList(attention_block(skip_channels = residuals_chans, gate_channels = gate_chans) for gate_chans, residuals_chans in
+                                                [(n_channels[4], n_channels[3]), (n_channels[3], n_channels[2]), (n_channels[2], n_channels[1]), (n_channels[1], n_channels[0])])
+
+        self.upsamples_recon = nn.ModuleList(up_sample(in_chans, out_chans) for in_chans, out_chans in
+                                        [(n_channels[4], n_channels[3]), (n_channels[3], n_channels[2]), (n_channels[2], n_channels[1]), (n_channels[1], n_channels[0])])
+        self.concat_recon = nn.ModuleList(crop_and_concatenate() for _ in range(4))
+        self.up_conv_recon = nn.ModuleList(residual_block(in_chans, out_chans) for in_chans, out_chans in
+                                        [(n_channels[4], n_channels[3]), (n_channels[3], n_channels[2]), (n_channels[2], n_channels[1]), (n_channels[1], n_channels[0])])
+        # Final 1x1 convolution layer to produce the reconstructed image
+        self.final_conv_recon = nn.Conv3d(in_channels = n_channels[0], out_channels = in_channels, kernel_size = 1, padding = 0, bias = False)
 
     # Pass the input through the residual attention U-Net
     def forward(self, x):
         # Store the skip connections
         skip_connections = []
-        # # Store the gate signals
-        # gate_signals = []
 
         # Pass the input through the contracting path
         for down_conv, down_sample in zip(self.down_conv, self.down_samples):
             x = down_conv(x)
             skip_connections.append(x)
-            #gate_signals.append(x)
             x = down_sample(x)
-        
+
         # Pass the output of the contracting path through the bottleneck
         x = self.bottleneck(x)
-        skip_connections.append(x)
+        
 
-        # Attention on the residual connections
-        n = len(skip_connections)
-        indices = [(n - 1 - i, n - 2 - i) for i in range(n - 1)]
-        attentions = []
-        for i, g_x in enumerate(indices):
-            g_gate = g_x[0]
-            x_residual = g_x[1]
-            attn = self.attention_blocks[i](skip_connections[x_residual], skip_connections[g_gate])
-            attentions.append(attn)
+        # Define segmentation and reconstruction variables
+        x_seg = x
+        x_recon = x
 
-        #attentions = attentions[::-1]
-    
-        # Pass the output of the attention blocks through the expanding path
+       
+
+        # --- Pass the output of the attention blocks through the expanding path of the segmentation path --- #
+        # Initialize the attention block counter and the skip connection counter
+        attn_block_count = 0
+        skip_connections_count = len(skip_connections)
         for up_sample, concat, up_conv in zip(self.upsamples, self.concat, self.up_conv):
-            x = up_sample(x)
-            x = concat(x, attentions.pop(0))
-            x = up_conv(x)
+            gated_attn = self.attention_blocks[attn_block_count](skip_connections[skip_connections_count - 1], x_seg)
+            attn_block_count += 1
+            skip_connections_count -= 1
+            x_seg = up_sample(x_seg)
+            x_seg = concat(x_seg, gated_attn)
+            x_seg = up_conv(x_seg)
 
         # Pass the output of the expanding path through the final convolution layer
-        x = self.final_conv(x)
-        return x
-    
+        x_seg = self.final_conv(x_seg) # Output segmentation map
 
-    # Test if 3d U-Net works
+        # Pass the output of the attention blocks through the expanding path of the reconstruction path
+        attn_block_count = 0
+        skip_connections_count = len(skip_connections)
+        for up_sample, concat, up_conv in zip(self.upsamples_recon, self.concat_recon, self.up_conv_recon):
+            gated_attn = self.attention_blocks_recon[attn_block_count](skip_connections[skip_connections_count - 1], x_recon)
+            attn_block_count += 1
+            skip_connections_count -= 1
+            x_recon = up_sample(x_recon)
+            x_recon = concat(x_recon, gated_attn)
+            x_recon = up_conv(x_recon)
+
+        # Pass the output of the expanding path through the final convolution layer
+        x_recon = self.final_conv_recon(x_recon) # Output reconstructed image
+
+        return x_seg, x_recon
+    
+# Test whether the MTL model works
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = ResidualAttention3DUnet(in_channels = 1, out_channels = 1).to(device)
-x = torch.randn(1, 1, 25, 320, 320).to(device)
-mask = model(x)
-mask.shape
+model = MTLResidualAttention3DUnet(in_channels = 1, out_channels = 9).to(device)
+x = torch.randn(2, 1, 40, 256, 256).to(device)
+mask, recon = model(x)
+mask.shape, recon.shape
+
+
