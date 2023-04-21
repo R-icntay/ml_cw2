@@ -1,0 +1,846 @@
+--------------------
+Epoch 1 / 100
+
+Epoch 1 average dice loss for main task: 0.1562
+
+Epoch 1 average dice loss for aux task: 0.1357
+
+Epoch 1 average total loss for both tasks: 0.3754
+--------------------
+Epoch 2 / 100
+
+Epoch 2 average dice loss for main task: 0.1593
+
+Epoch 2 average dice loss for aux task: 0.1263
+
+Epoch 2 average total loss for both tasks: 0.3647
+--------------------
+Epoch 3 / 100
+
+Epoch 3 average dice loss for main task: 0.1565
+
+Epoch 3 average dice loss for aux task: 0.1302
+
+Epoch 3 average total loss for both tasks: 0.3674
+--------------------
+Epoch 4 / 100
+
+Epoch 4 average dice loss for main task: 0.1511
+
+Epoch 4 average dice loss for aux task: 0.1239
+
+Epoch 4 average total loss for both tasks: 0.3521
+--------------------
+Epoch 5 / 100
+
+Epoch 5 average dice loss for main task: 0.1484
+
+Epoch 5 average dice loss for aux task: 0.1236
+
+Epoch 5 average total loss for both tasks: 0.3487
+--------------------
+Epoch 6 / 100
+
+Epoch 6 average dice loss for main task: 0.1558
+
+Epoch 6 average dice loss for aux task: 0.1267
+
+Epoch 6 average total loss for both tasks: 0.3614
+--------------------
+Epoch 7 / 100
+
+Epoch 7 average dice loss for main task: 0.1610
+
+Epoch 7 average dice loss for aux task: 0.1296
+
+Epoch 7 average total loss for both tasks: 0.3715
+--------------------
+Epoch 8 / 100
+
+Epoch 8 average dice loss for main task: 0.1519
+
+Epoch 8 average dice loss for aux task: 0.1249
+
+Epoch 8 average total loss for both tasks: 0.3544
+--------------------
+Epoch 9 / 100
+
+Epoch 9 average dice loss for main task: 0.1534
+
+Epoch 9 average dice loss for aux task: 0.1277
+
+Epoch 9 average total loss for both tasks: 0.3603
+--------------------
+Epoch 10 / 100
+
+Epoch 10 average dice loss for main task: 0.1498
+
+Epoch 10 average dice loss for aux task: 0.1196
+
+Epoch 10 average total loss for both tasks: 0.3443
+saved new best metric model
+
+Current epoch: 10 current mean dice for main task: 0.8088
+Best mean dice for main task: 0.8088 at epoch: 10
+Current epoch: 10 current mean dice for aux task: 0.8424
+--------------------
+Epoch 11 / 100
+
+Epoch 11 average dice loss for main task: 0.1497
+
+Epoch 11 average dice loss for aux task: 0.1199
+
+Epoch 11 average total loss for both tasks: 0.3446
+--------------------
+Epoch 12 / 100
+
+Epoch 12 average dice loss for main task: 0.1478
+
+Epoch 12 average dice loss for aux task: 0.1191
+
+Epoch 12 average total loss for both tasks: 0.3412
+--------------------
+Epoch 13 / 100
+
+Epoch 13 average dice loss for main task: 0.1493
+
+Epoch 13 average dice loss for aux task: 0.1206
+
+Epoch 13 average total loss for both tasks: 0.3450
+--------------------
+Epoch 14 / 100
+
+Epoch 14 average dice loss for main task: 0.1502
+
+Epoch 14 average dice loss for aux task: 0.1201
+
+Epoch 14 average total loss for both tasks: 0.3454
+--------------------
+Epoch 15 / 100
+
+Epoch 15 average dice loss for main task: 0.1483
+
+Epoch 15 average dice loss for aux task: 0.1183
+
+Epoch 15 average total loss for both tasks: 0.3406
+--------------------
+Epoch 16 / 100
+
+Epoch 16 average dice loss for main task: 0.1487
+
+Epoch 16 average dice loss for aux task: 0.1193
+
+Epoch 16 average total loss for both tasks: 0.3425
+--------------------
+Epoch 17 / 100
+
+Epoch 17 average dice loss for main task: 0.1461
+
+Epoch 17 average dice loss for aux task: 0.1167
+
+Epoch 17 average total loss for both tasks: 0.3357
+--------------------
+Epoch 18 / 100
+
+Epoch 18 average dice loss for main task: 0.1438
+
+Epoch 18 average dice loss for aux task: 0.1174
+
+Epoch 18 average total loss for both tasks: 0.3343
+--------------------
+Epoch 19 / 100
+
+Epoch 19 average dice loss for main task: 0.1433
+
+Epoch 19 average dice loss for aux task: 0.1156
+
+Epoch 19 average total loss for both tasks: 0.3309
+--------------------
+Epoch 20 / 100
+
+Epoch 20 average dice loss for main task: 0.1432
+
+Epoch 20 average dice loss for aux task: 0.1132
+
+Epoch 20 average total loss for both tasks: 0.3273
+saved new best metric model
+
+Current epoch: 20 current mean dice for main task: 0.8184
+Best mean dice for main task: 0.8184 at epoch: 20
+Current epoch: 20 current mean dice for aux task: 0.8467
+--------------------
+Epoch 21 / 100
+
+Epoch 21 average dice loss for main task: 0.1444
+
+Epoch 21 average dice loss for aux task: 0.1127
+
+Epoch 21 average total loss for both tasks: 0.3278
+--------------------
+Epoch 22 / 100
+
+Epoch 22 average dice loss for main task: 0.1454
+
+Epoch 22 average dice loss for aux task: 0.1135
+
+Epoch 22 average total loss for both tasks: 0.3301
+--------------------
+Epoch 23 / 100
+
+Epoch 23 average dice loss for main task: 0.1418
+
+Epoch 23 average dice loss for aux task: 0.1119
+
+Epoch 23 average total loss for both tasks: 0.3239
+--------------------
+Epoch 24 / 100
+
+Epoch 24 average dice loss for main task: 0.1454
+
+Epoch 24 average dice loss for aux task: 0.1142
+
+Epoch 24 average total loss for both tasks: 0.3313
+--------------------
+Epoch 25 / 100
+
+Epoch 25 average dice loss for main task: 0.1410
+
+Epoch 25 average dice loss for aux task: 0.1140
+
+Epoch 25 average total loss for both tasks: 0.3261
+--------------------
+Epoch 26 / 100
+
+Epoch 26 average dice loss for main task: 0.1381
+
+Epoch 26 average dice loss for aux task: 0.1094
+
+Epoch 26 average total loss for both tasks: 0.3160
+--------------------
+Epoch 27 / 100
+
+Epoch 27 average dice loss for main task: 0.1379
+
+Epoch 27 average dice loss for aux task: 0.1095
+
+Epoch 27 average total loss for both tasks: 0.3159
+--------------------
+Epoch 28 / 100
+
+Epoch 28 average dice loss for main task: 0.1367
+
+Epoch 28 average dice loss for aux task: 0.1109
+
+Epoch 28 average total loss for both tasks: 0.3168
+--------------------
+Epoch 29 / 100
+
+Epoch 29 average dice loss for main task: 0.1357
+
+Epoch 29 average dice loss for aux task: 0.1079
+
+Epoch 29 average total loss for both tasks: 0.3112
+--------------------
+Epoch 30 / 100
+
+Epoch 30 average dice loss for main task: 0.1355
+
+Epoch 30 average dice loss for aux task: 0.1082
+
+Epoch 30 average total loss for both tasks: 0.3114
+
+Current epoch: 30 current mean dice for main task: 0.8147
+Best mean dice for main task: 0.8184 at epoch: 20
+Current epoch: 30 current mean dice for aux task: 0.8469
+--------------------
+Epoch 31 / 100
+
+Epoch 31 average dice loss for main task: 0.1351
+
+Epoch 31 average dice loss for aux task: 0.1077
+
+Epoch 31 average total loss for both tasks: 0.3101
+--------------------
+Epoch 32 / 100
+
+Epoch 32 average dice loss for main task: 0.1394
+
+Epoch 32 average dice loss for aux task: 0.1111
+
+Epoch 32 average total loss for both tasks: 0.3200
+--------------------
+Epoch 33 / 100
+
+Epoch 33 average dice loss for main task: 0.1348
+
+Epoch 33 average dice loss for aux task: 0.1068
+
+Epoch 33 average total loss for both tasks: 0.3084
+--------------------
+Epoch 34 / 100
+
+Epoch 34 average dice loss for main task: 0.1353
+
+Epoch 34 average dice loss for aux task: 0.1076
+
+Epoch 34 average total loss for both tasks: 0.3103
+--------------------
+Epoch 35 / 100
+
+Epoch 35 average dice loss for main task: 0.1394
+
+Epoch 35 average dice loss for aux task: 0.1112
+
+Epoch 35 average total loss for both tasks: 0.3202
+--------------------
+Epoch 36 / 100
+
+Epoch 36 average dice loss for main task: 0.1314
+
+Epoch 36 average dice loss for aux task: 0.1059
+
+Epoch 36 average total loss for both tasks: 0.3033
+--------------------
+Epoch 37 / 100
+
+Epoch 37 average dice loss for main task: 0.1311
+
+Epoch 37 average dice loss for aux task: 0.1055
+
+Epoch 37 average total loss for both tasks: 0.3025
+--------------------
+Epoch 38 / 100
+
+Epoch 38 average dice loss for main task: 0.1298
+
+Epoch 38 average dice loss for aux task: 0.1050
+
+Epoch 38 average total loss for both tasks: 0.3003
+--------------------
+Epoch 39 / 100
+
+Epoch 39 average dice loss for main task: 0.1286
+
+Epoch 39 average dice loss for aux task: 0.1029
+
+Epoch 39 average total loss for both tasks: 0.2957
+--------------------
+Epoch 40 / 100
+
+Epoch 40 average dice loss for main task: 0.1275
+
+Epoch 40 average dice loss for aux task: 0.1028
+
+Epoch 40 average total loss for both tasks: 0.2945
+saved new best metric model
+
+Current epoch: 40 current mean dice for main task: 0.8230
+Best mean dice for main task: 0.8230 at epoch: 40
+Current epoch: 40 current mean dice for aux task: 0.8338
+--------------------
+Epoch 41 / 100
+
+Epoch 41 average dice loss for main task: 0.1285
+
+Epoch 41 average dice loss for aux task: 0.1030
+
+Epoch 41 average total loss for both tasks: 0.2958
+--------------------
+Epoch 42 / 100
+
+Epoch 42 average dice loss for main task: 0.1282
+
+Epoch 42 average dice loss for aux task: 0.1023
+
+Epoch 42 average total loss for both tasks: 0.2944
+--------------------
+Epoch 43 / 100
+
+Epoch 43 average dice loss for main task: 0.1251
+
+Epoch 43 average dice loss for aux task: 0.0996
+
+Epoch 43 average total loss for both tasks: 0.2871
+--------------------
+Epoch 44 / 100
+
+Epoch 44 average dice loss for main task: 0.1260
+
+Epoch 44 average dice loss for aux task: 0.0993
+
+Epoch 44 average total loss for both tasks: 0.2876
+--------------------
+Epoch 45 / 100
+
+Epoch 45 average dice loss for main task: 0.1245
+
+Epoch 45 average dice loss for aux task: 0.0990
+
+Epoch 45 average total loss for both tasks: 0.2855
+--------------------
+Epoch 46 / 100
+
+Epoch 46 average dice loss for main task: 0.1244
+
+Epoch 46 average dice loss for aux task: 0.0989
+
+Epoch 46 average total loss for both tasks: 0.2852
+--------------------
+Epoch 47 / 100
+
+Epoch 47 average dice loss for main task: 0.1234
+
+Epoch 47 average dice loss for aux task: 0.1007
+
+Epoch 47 average total loss for both tasks: 0.2868
+--------------------
+Epoch 48 / 100
+
+Epoch 48 average dice loss for main task: 0.1237
+
+Epoch 48 average dice loss for aux task: 0.0994
+
+Epoch 48 average total loss for both tasks: 0.2852
+--------------------
+Epoch 49 / 100
+
+Epoch 49 average dice loss for main task: 0.1218
+
+Epoch 49 average dice loss for aux task: 0.0984
+
+Epoch 49 average total loss for both tasks: 0.2815
+--------------------
+Epoch 50 / 100
+
+Epoch 50 average dice loss for main task: 0.1208
+
+Epoch 50 average dice loss for aux task: 0.0976
+
+Epoch 50 average total loss for both tasks: 0.2793
+saved new best metric model
+
+Current epoch: 50 current mean dice for main task: 0.8235
+Best mean dice for main task: 0.8235 at epoch: 50
+Current epoch: 50 current mean dice for aux task: 0.8542
+--------------------
+Epoch 51 / 100
+
+Epoch 51 average dice loss for main task: 0.1206
+
+Epoch 51 average dice loss for aux task: 0.0974
+
+Epoch 51 average total loss for both tasks: 0.2787
+--------------------
+Epoch 52 / 100
+
+Epoch 52 average dice loss for main task: 0.1203
+
+Epoch 52 average dice loss for aux task: 0.0957
+
+Epoch 52 average total loss for both tasks: 0.2760
+--------------------
+Epoch 53 / 100
+
+Epoch 53 average dice loss for main task: 0.1184
+
+Epoch 53 average dice loss for aux task: 0.0953
+
+Epoch 53 average total loss for both tasks: 0.2732
+--------------------
+Epoch 54 / 100
+
+Epoch 54 average dice loss for main task: 0.1173
+
+Epoch 54 average dice loss for aux task: 0.0951
+
+Epoch 54 average total loss for both tasks: 0.2717
+--------------------
+Epoch 55 / 100
+
+Epoch 55 average dice loss for main task: 0.1178
+
+Epoch 55 average dice loss for aux task: 0.0935
+
+Epoch 55 average total loss for both tasks: 0.2699
+--------------------
+Epoch 56 / 100
+
+Epoch 56 average dice loss for main task: 0.1161
+
+Epoch 56 average dice loss for aux task: 0.0935
+
+Epoch 56 average total loss for both tasks: 0.2679
+--------------------
+Epoch 57 / 100
+
+Epoch 57 average dice loss for main task: 0.1165
+
+Epoch 57 average dice loss for aux task: 0.0922
+
+Epoch 57 average total loss for both tasks: 0.2664
+--------------------
+Epoch 58 / 100
+
+Epoch 58 average dice loss for main task: 0.1160
+
+Epoch 58 average dice loss for aux task: 0.0945
+
+Epoch 58 average total loss for both tasks: 0.2693
+--------------------
+Epoch 59 / 100
+
+Epoch 59 average dice loss for main task: 0.1144
+
+Epoch 59 average dice loss for aux task: 0.0925
+
+Epoch 59 average total loss for both tasks: 0.2646
+--------------------
+Epoch 60 / 100
+
+Epoch 60 average dice loss for main task: 0.1138
+
+Epoch 60 average dice loss for aux task: 0.0915
+
+Epoch 60 average total loss for both tasks: 0.2624
+saved new best metric model
+
+Current epoch: 60 current mean dice for main task: 0.8290
+Best mean dice for main task: 0.8290 at epoch: 60
+Current epoch: 60 current mean dice for aux task: 0.8553
+--------------------
+Epoch 61 / 100
+
+Epoch 61 average dice loss for main task: 0.1127
+
+Epoch 61 average dice loss for aux task: 0.0907
+
+Epoch 61 average total loss for both tasks: 0.2601
+--------------------
+Epoch 62 / 100
+
+Epoch 62 average dice loss for main task: 0.1133
+
+Epoch 62 average dice loss for aux task: 0.0914
+
+Epoch 62 average total loss for both tasks: 0.2617
+--------------------
+Epoch 63 / 100
+
+Epoch 63 average dice loss for main task: 0.1123
+
+Epoch 63 average dice loss for aux task: 0.0907
+
+Epoch 63 average total loss for both tasks: 0.2597
+--------------------
+Epoch 64 / 100
+
+Epoch 64 average dice loss for main task: 0.1123
+
+Epoch 64 average dice loss for aux task: 0.0906
+
+Epoch 64 average total loss for both tasks: 0.2594
+--------------------
+Epoch 65 / 100
+
+Epoch 65 average dice loss for main task: 0.1107
+
+Epoch 65 average dice loss for aux task: 0.0904
+
+Epoch 65 average total loss for both tasks: 0.2574
+--------------------
+Epoch 66 / 100
+
+Epoch 66 average dice loss for main task: 0.1111
+
+Epoch 66 average dice loss for aux task: 0.0895
+
+Epoch 66 average total loss for both tasks: 0.2565
+--------------------
+Epoch 67 / 100
+
+Epoch 67 average dice loss for main task: 0.1102
+
+Epoch 67 average dice loss for aux task: 0.0885
+
+Epoch 67 average total loss for both tasks: 0.2540
+--------------------
+Epoch 68 / 100
+
+Epoch 68 average dice loss for main task: 0.1097
+
+Epoch 68 average dice loss for aux task: 0.0873
+
+Epoch 68 average total loss for both tasks: 0.2516
+--------------------
+Epoch 69 / 100
+
+Epoch 69 average dice loss for main task: 0.1093
+
+Epoch 69 average dice loss for aux task: 0.0881
+
+Epoch 69 average total loss for both tasks: 0.2523
+--------------------
+Epoch 70 / 100
+
+Epoch 70 average dice loss for main task: 0.1085
+
+Epoch 70 average dice loss for aux task: 0.0877
+
+Epoch 70 average total loss for both tasks: 0.2508
+
+Current epoch: 70 current mean dice for main task: 0.8261
+Best mean dice for main task: 0.8290 at epoch: 60
+Current epoch: 70 current mean dice for aux task: 0.8558
+--------------------
+Epoch 71 / 100
+
+Epoch 71 average dice loss for main task: 0.1078
+
+Epoch 71 average dice loss for aux task: 0.0868
+
+Epoch 71 average total loss for both tasks: 0.2488
+--------------------
+Epoch 72 / 100
+
+Epoch 72 average dice loss for main task: 0.1075
+
+Epoch 72 average dice loss for aux task: 0.0867
+
+Epoch 72 average total loss for both tasks: 0.2483
+--------------------
+Epoch 73 / 100
+
+Epoch 73 average dice loss for main task: 0.1075
+
+Epoch 73 average dice loss for aux task: 0.0876
+
+Epoch 73 average total loss for both tasks: 0.2497
+--------------------
+Epoch 74 / 100
+
+Epoch 74 average dice loss for main task: 0.1061
+
+Epoch 74 average dice loss for aux task: 0.0857
+
+Epoch 74 average total loss for both tasks: 0.2452
+--------------------
+Epoch 75 / 100
+
+Epoch 75 average dice loss for main task: 0.1059
+
+Epoch 75 average dice loss for aux task: 0.0862
+
+Epoch 75 average total loss for both tasks: 0.2459
+--------------------
+Epoch 76 / 100
+
+Epoch 76 average dice loss for main task: 0.1056
+
+Epoch 76 average dice loss for aux task: 0.0845
+
+Epoch 76 average total loss for both tasks: 0.2429
+--------------------
+Epoch 77 / 100
+
+Epoch 77 average dice loss for main task: 0.1057
+
+Epoch 77 average dice loss for aux task: 0.0850
+
+Epoch 77 average total loss for both tasks: 0.2439
+--------------------
+Epoch 78 / 100
+
+Epoch 78 average dice loss for main task: 0.1052
+
+Epoch 78 average dice loss for aux task: 0.0861
+
+Epoch 78 average total loss for both tasks: 0.2449
+--------------------
+Epoch 79 / 100
+
+Epoch 79 average dice loss for main task: 0.1056
+
+Epoch 79 average dice loss for aux task: 0.0850
+
+Epoch 79 average total loss for both tasks: 0.2437
+--------------------
+Epoch 80 / 100
+
+Epoch 80 average dice loss for main task: 0.1048
+
+Epoch 80 average dice loss for aux task: 0.0847
+
+Epoch 80 average total loss for both tasks: 0.2423
+
+Current epoch: 80 current mean dice for main task: 0.8239
+Best mean dice for main task: 0.8290 at epoch: 60
+Current epoch: 80 current mean dice for aux task: 0.8538
+--------------------
+Epoch 81 / 100
+
+Epoch 81 average dice loss for main task: 0.1039
+
+Epoch 81 average dice loss for aux task: 0.0840
+
+Epoch 81 average total loss for both tasks: 0.2402
+--------------------
+Epoch 82 / 100
+
+Epoch 82 average dice loss for main task: 0.1034
+
+Epoch 82 average dice loss for aux task: 0.0826
+
+Epoch 82 average total loss for both tasks: 0.2377
+--------------------
+Epoch 83 / 100
+
+Epoch 83 average dice loss for main task: 0.1035
+
+Epoch 83 average dice loss for aux task: 0.0832
+
+Epoch 83 average total loss for both tasks: 0.2386
+--------------------
+Epoch 84 / 100
+
+Epoch 84 average dice loss for main task: 0.1036
+
+Epoch 84 average dice loss for aux task: 0.0832
+
+Epoch 84 average total loss for both tasks: 0.2387
+--------------------
+Epoch 85 / 100
+
+Epoch 85 average dice loss for main task: 0.1025
+
+Epoch 85 average dice loss for aux task: 0.0826
+
+Epoch 85 average total loss for both tasks: 0.2366
+--------------------
+Epoch 86 / 100
+
+Epoch 86 average dice loss for main task: 0.1031
+
+Epoch 86 average dice loss for aux task: 0.0828
+
+Epoch 86 average total loss for both tasks: 0.2375
+--------------------
+Epoch 87 / 100
+
+Epoch 87 average dice loss for main task: 0.1025
+
+Epoch 87 average dice loss for aux task: 0.0828
+
+Epoch 87 average total loss for both tasks: 0.2369
+--------------------
+Epoch 88 / 100
+
+Epoch 88 average dice loss for main task: 0.1022
+
+Epoch 88 average dice loss for aux task: 0.0830
+
+Epoch 88 average total loss for both tasks: 0.2370
+--------------------
+Epoch 89 / 100
+
+Epoch 89 average dice loss for main task: 0.1016
+
+Epoch 89 average dice loss for aux task: 0.0820
+
+Epoch 89 average total loss for both tasks: 0.2348
+--------------------
+Epoch 90 / 100
+
+Epoch 90 average dice loss for main task: 0.1018
+
+Epoch 90 average dice loss for aux task: 0.0816
+
+Epoch 90 average total loss for both tasks: 0.2343
+
+Current epoch: 90 current mean dice for main task: 0.8256
+Best mean dice for main task: 0.8290 at epoch: 60
+Current epoch: 90 current mean dice for aux task: 0.8550
+--------------------
+Epoch 91 / 100
+
+Epoch 91 average dice loss for main task: 0.1020
+
+Epoch 91 average dice loss for aux task: 0.0819
+
+Epoch 91 average total loss for both tasks: 0.2350
+--------------------
+Epoch 92 / 100
+
+Epoch 92 average dice loss for main task: 0.1021
+
+Epoch 92 average dice loss for aux task: 0.0818
+
+Epoch 92 average total loss for both tasks: 0.2350
+--------------------
+Epoch 93 / 100
+
+Epoch 93 average dice loss for main task: 0.1022
+
+Epoch 93 average dice loss for aux task: 0.0824
+
+Epoch 93 average total loss for both tasks: 0.2360
+--------------------
+Epoch 94 / 100
+
+Epoch 94 average dice loss for main task: 0.1009
+
+Epoch 94 average dice loss for aux task: 0.0810
+
+Epoch 94 average total loss for both tasks: 0.2325
+--------------------
+Epoch 95 / 100
+
+Epoch 95 average dice loss for main task: 0.1015
+
+Epoch 95 average dice loss for aux task: 0.0822
+
+Epoch 95 average total loss for both tasks: 0.2350
+--------------------
+Epoch 96 / 100
+
+Epoch 96 average dice loss for main task: 0.1012
+
+Epoch 96 average dice loss for aux task: 0.0827
+
+Epoch 96 average total loss for both tasks: 0.2354
+--------------------
+Epoch 97 / 100
+
+Epoch 97 average dice loss for main task: 0.1008
+
+Epoch 97 average dice loss for aux task: 0.0820
+
+Epoch 97 average total loss for both tasks: 0.2339
+--------------------
+Epoch 98 / 100
+
+Epoch 98 average dice loss for main task: 0.1014
+
+Epoch 98 average dice loss for aux task: 0.0819
+
+Epoch 98 average total loss for both tasks: 0.2344
+--------------------
+Epoch 99 / 100
+
+Epoch 99 average dice loss for main task: 0.1019
+
+Epoch 99 average dice loss for aux task: 0.0818
+
+Epoch 99 average total loss for both tasks: 0.2348
+--------------------
+Epoch 100 / 100
+
+Epoch 100 average dice loss for main task: 0.1013
+
+Epoch 100 average dice loss for aux task: 0.0815
+
+Epoch 100 average total loss for both tasks: 0.2336
+
+Current epoch: 100 current mean dice for main task: 0.8252
+Best mean dice for main task: 0.8290 at epoch: 60
+Current epoch: 100 current mean dice for aux task: 0.8551
+Done training! Best mean dice: 0.8290 at epoch: 60
