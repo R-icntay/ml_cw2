@@ -56,7 +56,7 @@ def train_model(model, device, train_files, train_transforms, val_files, val_tra
     MODEL_PATH.mkdir(parents=True, exist_ok=True)
 
     # Create model save path
-    MODEL_NAME = "nn_MTL_pytorch_male_pelvic_segmentation_model_3.pth"
+    MODEL_NAME = "pelvic_segmentation_model.pth"
     MODEL_SAVE_PATH = MODEL_PATH / MODEL_NAME
 
     best_metric             = -1

@@ -4,6 +4,7 @@ from shutil import copyfile
 import os
 
 def split_data(img_path):
+    # Read all files ending with _img.nii
     img_files   = list(img_path.glob("*_img.nii")) # Image and mask are in the same folder
     num_images  = len(img_files)
 
