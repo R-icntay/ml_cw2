@@ -1,3 +1,5 @@
+import numpy as np
+
 from monai.transforms import (
     EnsureChannelFirstd, # Adjust or add the channel dimension of input data to ensure channel_first shape.
     CenterSpatialCropd,
@@ -15,6 +17,9 @@ from monai.transforms import (
 )
 
 def get_transforms():
+    print("-" * 40)
+    print("Creating transformations...")
+    
     # Create transforms for training
     train_transforms = Compose(
         [

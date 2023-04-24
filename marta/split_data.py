@@ -4,6 +4,9 @@ from shutil import copyfile
 import os
 
 def split_data(img_path):
+    print("-" * 40)
+    print("Splitting data into train-validate-test sets...")
+    
     # Read all files ending with _img.nii
     img_files   = list(img_path.glob("*_img.nii")) # Image and mask are in the same folder
     num_images  = len(img_files)
@@ -12,8 +15,6 @@ def split_data(img_path):
     train_split = int(0.8 * num_images)
     val_split   = int(0.1 * num_images)
     test_split  = int(num_images - (train_split + val_split))
-    print('num images: ', num_images)
-    print('train-val-test: ', train_split, val_split, test_split)
 
     # Set the random seed for reproducibility
     random.seed(2022)
@@ -52,21 +53,29 @@ def split_data(img_path):
                 copyfile(image.parent / mask, image.parent / directory.name.replace("images", "masks") / mask)
 
     # Put the train images and masks in a dictionary
-    train_images = sorted(train_image_dir.glob("*"))
-    train_masks = sorted(train_mask_dir.glob("*"))
-    train_files = [{"image": image_name, "mask": mask_name} for image_name, mask_name in zip(train_images, train_masks)]
+    train_images    = sorted(train_image_dir.glob("*"))
+    train_masks     = sorted(train_mask_dir.glob("*"))
+    train_files     = [{"image": image_name, "mask": mask_name} for image_name, mask_name in zip(train_images, train_masks)]
+    
+    print(len(train_files))
 
     # Put the validation images and masks in a dictionary
-    val_images = sorted(val_image_dir.glob("*"))
-    val_masks = sorted(val_mask_dir.glob("*"))
-    val_files = [{"image": image_name, "mask": mask_name} for image_name, mask_name in zip(val_images, val_masks)]
+    val_images      = sorted(val_image_dir.glob("*"))
+    val_masks       = sorted(val_mask_dir.glob("*"))
+    val_files       = [{"image": image_name, "mask": mask_name} for image_name, mask_name in zip(val_images, val_masks)]
 
+    print(len(val_files))
+    
     # Put the test images and masks in a dictionary
-    test_images = sorted(test_image_dir.glob("*"))
-    test_masks = sorted(test_mask_dir.glob("*"))
-    test_files = [{"image": image_name, "mask": mask_name} for image_name, mask_name in zip(test_images, test_masks)]
+    test_images     = sorted(test_image_dir.glob("*"))
+    test_masks      = sorted(test_mask_dir.glob("*"))
+    test_files      = [{"image": image_name, "mask": mask_name} for image_name, mask_name in zip(test_images, test_masks)]
+    
+    print(len(test_files))
     
     print('Images have been divided into train-validate-test sets.')
+    print('Total number of images: ', num_images)
+    print('Number of images train-validate-test: ', train_split, '-', val_split, '-', test_split)
 
     return train_files, val_files, test_files
     

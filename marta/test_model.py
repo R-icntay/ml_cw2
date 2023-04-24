@@ -39,12 +39,15 @@ def test_model(model, device, val_files, val_transforms, organs_dict, pred_main,
     
     # Model save path
     MODEL_PATH = Path("models")
-    MODEL_NAME = "pelvic_segmentation_model.pth"
+    MODEL_NAME = "model.pth"
     MODEL_SAVE_PATH = MODEL_PATH / MODEL_NAME
     
     model.load_state_dict(torch.load(MODEL_SAVE_PATH))
     model.eval()
 
+    print("-" * 40)
+    print("Starting model testing...")
+    
     # Disable gradient calculation
     with torch.inference_mode():
         # Loop through the validation data
@@ -69,17 +72,15 @@ def test_model(model, device, val_files, val_transforms, organs_dict, pred_main,
             dice_metric_aux(y_pred = val_aux_outputs, y = val_aux_labels)
             
         # Compute the average metric value across all iterations
-        # main_metric = dice_metric_main.aggregate().item()
-        # aux_metric = dice_metric_aux.aggregate().item()
- 
+        main_metric = dice_metric_main.aggregate().item()
+        aux_metric = dice_metric_aux.aggregate().item()
         
-    print('-'*10, ' TEST DATA ', '-'*10)
     print(
-        f"\nMean dice for main task: {dice_metric_main:.4f}"
-        f"\nMean dice for aux task: {dice_metric_aux:.4f}"
+        f"\nMean dice for main task: {main_metric:.4f}"
+        f"\nMean dice for aux task: {aux_metric:.4f}"
         )
     
-    save_results(MODEL_NAME, MODEL_PATH, dice_metric_main, dice_metric_aux)
+    save_results(MODEL_NAME, MODEL_PATH, main_metric, aux_metric)
     
 
                     

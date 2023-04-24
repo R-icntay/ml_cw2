@@ -1,15 +1,28 @@
-def modify_labels(labels, organs_dict):
+def modify_labels(labels, organs):
+    all_org = organs['all']
+    main = organs['main']
+    aux  = organs['aux']
+    dict = organs['dict']
+    
     # Modify the main labels to match the output of the main decoder
     main_labels = labels.clone()
-    main_labels[(main_labels != organs_dict['Transition zone']) & (main_labels != organs_dict['Central gland'])] = 0.0
-    main_labels[main_labels == organs_dict['Transition zone']] = 1.0
-    main_labels[main_labels == organs_dict['Central gland']] = 2.0
-
-    # Modify the auxilliary labels to match the output of the auxilliary decoder
     aux_labels = labels.clone()
-    aux_labels[(aux_labels != organs_dict['Bladder']) & (aux_labels != organs_dict['Rectum']) & (aux_labels != organs_dict['Seminal vesicle'])] = 0.0
-    aux_labels[aux_labels == organs_dict['Bladder']] = 1.0
-    aux_labels[aux_labels == organs_dict['Rectum']] = 2.0
-    aux_labels[aux_labels == organs_dict['Seminal vesicle']] = 3.0
+
+    count_main = 1.0
+    count_aux  = 1.0
+    
+    for organ in all_org:
+        # Modify the labels to match the output of the decoder
+        if organ in main:
+            main_labels[main_labels == dict[organ]] = count_main
+            count_main += 1.0
+        else:
+            main_labels[main_labels != dict[organ]] = 0.0
+            
+        if organ in aux:
+            aux_labels[aux_labels == dict[organ]] = count_aux
+            count_aux += 1.0
+        else:
+            aux_labels[aux_labels != dict[organ]] = 0.0
     
     return main_labels, aux_labels

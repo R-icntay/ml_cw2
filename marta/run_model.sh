@@ -12,6 +12,6 @@ hostname
 
 date
 
-python3 main.py -t
+python3 main.py 
 
 date

@@ -7,8 +7,9 @@ from pathlib                import Path
 from labels                 import modify_labels
 
 BATCH_SIZE      = 2
-max_epochs      = 60
+max_epochs      = 100
 val_interval    = 10
+print_interval  = 10
 
 def set_data(train_files, train_transforms, val_files, val_transforms):
     torch.cuda.empty_cache()
@@ -47,7 +48,7 @@ def save_results(MODEL_NAME, MODEL_PATH, epoch_loss_values, epoch_aux_loss_value
         pickle.dump(aux_metric_values, f)
 
 
-def train_model(model, device, train_files, train_transforms, val_files, val_transforms, organs_dict, pred_main, label_main, pred_aux, label_aux):
+def train_model(model, device, train_files, train_transforms, val_files, val_transforms, organs, pred_main, label_main, pred_aux, label_aux):
     train_dl, val_dl = set_data(train_files, train_transforms, val_files, val_transforms)
     loss_function, optimizer, dice_metric_main, dice_metric_aux, scheduler = set_model_params(model)
     
@@ -56,7 +57,7 @@ def train_model(model, device, train_files, train_transforms, val_files, val_tra
     MODEL_PATH.mkdir(parents=True, exist_ok=True)
 
     # Create model save path
-    MODEL_NAME = "pelvic_segmentation_model.pth"
+    MODEL_NAME = "model.pth"
     MODEL_SAVE_PATH = MODEL_PATH / MODEL_NAME
 
     best_metric             = -1
@@ -71,9 +72,13 @@ def train_model(model, device, train_files, train_transforms, val_files, val_tra
     main_weight = 1.1
     aux_weight  = 1.5
     
-    for epoch in range(max_epochs):
-        print("-" * 20)
-        print(f"Epoch {epoch + 1} / {max_epochs}")
+    print("-" * 20)
+    print("Starting model training...")
+    
+    for epoch in range(1,max_epochs):
+        if epoch % print_interval == 0:
+            print("-" * 20)
+            print(f"Epoch {epoch} / {max_epochs}")
         
         # Put the model into training mode
         model.train()
@@ -87,7 +92,7 @@ def train_model(model, device, train_files, train_transforms, val_files, val_tra
             inputs = batch["image"].permute(0, 1, 4, 2, 3).to(device)
             labels = batch["mask"].to(device) # Permute beccause of torch upsample
             
-            main_labels, aux_labels = modify_labels(labels, organs_dict)
+            main_labels, aux_labels = modify_labels(labels, organs)
 
             # Forward pass
             main_seg, aux_seg = model(inputs) 
@@ -122,16 +127,20 @@ def train_model(model, device, train_files, train_transforms, val_files, val_tra
         epoch_total_loss_values.append(epoch_total_loss)
         epoch_aux_loss_values.append(epoch_aux_loss)
 
-        # Print the average loss of the epoch
-        print(f"\nEpoch {epoch + 1} average dice loss for main task: {epoch_loss:.4f}")
-        print(f"\nEpoch {epoch + 1} average dice loss for aux task: {epoch_aux_loss:.4f}")
-        print(f"\nEpoch {epoch + 1} average total loss for both tasks: {epoch_total_loss:.4f}")
+        if epoch % print_interval == 0:
+            # Print the average loss of the epoch
+            print(f"\nEpoch {epoch} average dice loss for main task: {epoch_loss:.4f}")
+            print(f"\nEpoch {epoch} average dice loss for aux task: {epoch_aux_loss:.4f}")
+            print(f"\nEpoch {epoch} average total loss for both tasks: {epoch_total_loss:.4f}")
 
         # Step the scheduler after every epoch
         scheduler.step()
 
         # Print loss and evaluate model when epoch is divisible by val_interval
-        if (epoch + 1) % val_interval == 0:
+        if epoch % val_interval == 0:
+            print("-" * 40)
+            print("Testing on validation data...")
+            
             # Put the model into evaluation mode
             model.eval()
             # Disable gradient calculation
@@ -139,7 +148,7 @@ def train_model(model, device, train_files, train_transforms, val_files, val_tra
                 # Loop through the validation data
                 for val_data in val_dl:
                     val_inputs, val_labels = val_data["image"].permute(0, 1, 4, 2, 3).to(device), val_data["mask"].to(device)
-                    val_main_labels, val_aux_labels = modify_labels(val_labels, organs_dict)
+                    val_main_labels, val_aux_labels = modify_labels(val_labels, organs)
 
                     # Forward pass
                     val_main_outputs, val_aux_outputs = model(val_inputs)
@@ -170,14 +179,14 @@ def train_model(model, device, train_files, train_transforms, val_files, val_tra
                 # If the metric is better than the best seen so far, save the model
                 if main_metric > best_metric:
                     best_metric = main_metric
-                    best_metric_epoch = epoch + 1
+                    best_metric_epoch = epoch
                     torch.save(model.state_dict(), MODEL_SAVE_PATH)
                     print("saved new best metric model")
                 
                 print(
-                    f"\nCurrent epoch: {epoch + 1} current mean dice for main task: {main_metric:.4f}"
+                    f"\nCurrent epoch: {epoch} current mean dice for main task: {main_metric:.4f}"
                     f"\nBest mean dice for main task: {best_metric:.4f} at epoch: {best_metric_epoch}"
-                    f"\nCurrent epoch: {epoch + 1} current mean dice for aux task: {aux_metric:.4f}"
+                    f"\nCurrent epoch: {epoch} current mean dice for aux task: {aux_metric:.4f}"
                     )
                 
     # When training is complete:
