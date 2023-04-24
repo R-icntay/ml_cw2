@@ -10,8 +10,10 @@ def split_data(img_path):
 
     # Create train, validation and test splits
     train_split = int(0.8 * num_images)
-    val_split   = int(0.10 * num_images)
+    val_split   = int(0.1 * num_images)
     test_split  = int(num_images - (train_split + val_split))
+    print('num images: ', num_images)
+    print('train-val-test: ', train_split, val_split, test_split)
 
     # Set the random seed for reproducibility
     random.seed(2022)
@@ -63,6 +65,8 @@ def split_data(img_path):
     test_images = sorted(test_image_dir.glob("*"))
     test_masks = sorted(test_mask_dir.glob("*"))
     test_files = [{"image": image_name, "mask": mask_name} for image_name, mask_name in zip(test_images, test_masks)]
+    
+    print('Images have been divided into train-validate-test sets.')
 
     return train_files, val_files, test_files
     
