@@ -49,7 +49,7 @@ def save_results(MODEL_NAME, MODEL_PATH, epoch_loss_values, main_metric_values):
         pickle.dump(main_metric_values, f)
 
 
-def train_model_base(model, device, params, train_files, train_transforms, val_files, val_transforms, organs, pred_main, label_main, pred_aux, label_aux):
+def train_model_base(model, device, params, train_files, train_transforms, val_files, val_transforms, organs, pred_main, label_main):
     """
     Train the model on the training dataset and evaluate the validation dataset.
     """
