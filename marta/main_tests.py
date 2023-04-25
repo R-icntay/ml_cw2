@@ -42,6 +42,7 @@ organs = {
 
 ############# BASE CASE #############
 if BASE_CASE:
+    torch.cuda.empty_cache()
     model  = ResidualAttention3DUnet(in_channels = 1, out_channels = len(organs['main'])+1).to(device) 
     
     if TRAIN:
@@ -52,6 +53,7 @@ if BASE_CASE:
 
 ############# AUXILIARY TASK - SEGMENT 3 EXTRA STRUCTURES #############
 if AUX_SEGMENT:
+    torch.cuda.empty_cache()
     organs['aux'] = ["Rectum", "Seminal vesicle", "Neurovascular bundle"]
     model = MTLResidualAttention3DUnet(in_channels = 1, main_out_channels = len(organs['main'])+1, aux_out_channels = len(organs['aux'])+1).to(device) 
     
@@ -63,4 +65,5 @@ if AUX_SEGMENT:
     
 ############# AUXILIARY TASK - RECONSTRUCTION #############
 if AUX_RECONSTRUCT:
+    torch.cuda.empty_cache()
     organs['aux'] = []

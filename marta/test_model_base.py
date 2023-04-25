@@ -37,7 +37,7 @@ def save_results(MODEL_NAME, MODEL_PATH, main_metric_values):
     
     # Save metric values
     pref = f"{MODEL_NAME.split('.')[0]}"
-    with open(MODEL_PATH/f"{pref}_main_metric_values_test.pkl", "wb") as f:
+    with open(MODEL_PATH/f"{pref}_base_case_test.pkl", "wb") as f:
         pickle.dump(main_metric_values, f)
 
 

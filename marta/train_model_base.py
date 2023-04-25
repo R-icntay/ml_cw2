@@ -41,18 +41,16 @@ def set_model_params(model):
     return loss_function, optimizer, dice_metric_main, scheduler
 
 
-def save_results(MODEL_NAME, MODEL_PATH, epoch_loss_values, epoch_total_loss_values, main_metric_values):
+def save_results(MODEL_NAME, MODEL_PATH, epoch_loss_values, main_metric_values):
     """
     Save performance metrics.
     """
     
     # Save epoch loss and metric values
     pref = f"{MODEL_NAME.split('.')[0]}"
-    with open(MODEL_PATH/f"{pref}_epoch_loss_values.pkl", "wb") as f:
+    with open(MODEL_PATH/f"{pref}_epoch_loss_base_case_train.pkl", "wb") as f:
         pickle.dump(epoch_loss_values, f)
-    with open(MODEL_PATH/f"{pref}_epoch_total_loss_values.pkl", "wb") as f:
-        pickle.dump(epoch_total_loss_values, f)
-    with open(MODEL_PATH/f"{pref}_main_metric_values.pkl", "wb") as f:
+    with open(MODEL_PATH/f"{pref}_base_case_validate.pkl", "wb") as f:
         pickle.dump(main_metric_values, f)
 
 
@@ -114,10 +112,10 @@ def train_model_base(model, device, train_files, train_transforms, val_files, va
             optimizer.step()
 
             # Add the loss to the epoch loss
-            epoch_loss          = epoch_loss + loss.item()
+            epoch_loss = epoch_loss + loss.item()
         
         # Compute the average loss of the epoch
-        epoch_loss          = epoch_loss        / step
+        epoch_loss = epoch_loss        / step
         epoch_loss_values.append(epoch_loss)
 
         if epoch % print_interval == 0:

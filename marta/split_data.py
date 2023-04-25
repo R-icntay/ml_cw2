@@ -3,9 +3,10 @@ import random
 from shutil import copyfile
 import os
 
-def split_data(img_path):
+def split_data(img_path, scale=1):
     """
     Read all images and divide into training, validation and test sets.
+    Scale to test models on fewer data.
     """
     
     print("-" * 40)
@@ -23,9 +24,9 @@ def split_data(img_path):
     num_images  = len(img_files)
 
     # Create train, validation and test splits
-    train_split = int(0.8 * num_images)
-    val_split   = int(0.1 * num_images)
-    test_split  = int(num_images - (train_split + val_split))
+    train_split = int(0.8 * num_images / scale)
+    val_split   = int(0.1 * num_images / scale)
+    test_split  = int((num_images - (train_split + val_split)* scale) / scale)
 
     # Set the random seed for reproducibility
     random.seed(2022)

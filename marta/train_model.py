@@ -49,15 +49,15 @@ def save_results(MODEL_NAME, MODEL_PATH, epoch_loss_values, epoch_aux_loss_value
     
     # Save epoch loss and metric values
     pref = f"{MODEL_NAME.split('.')[0]}"
-    with open(MODEL_PATH/f"{pref}_epoch_loss_values.pkl", "wb") as f:
+    with open(MODEL_PATH/f"{pref}_epoch_loss.pkl", "wb") as f:
         pickle.dump(epoch_loss_values, f)
-    with open(MODEL_PATH/f"{pref}_epoch_aux_loss_values.pkl", "wb") as f:
+    with open(MODEL_PATH/f"{pref}_epoch_aux_loss.pkl", "wb") as f:
         pickle.dump(epoch_aux_loss_values, f)
-    with open(MODEL_PATH/f"{pref}_epoch_total_loss_values.pkl", "wb") as f:
+    with open(MODEL_PATH/f"{pref}_epoch_total_loss.pkl", "wb") as f:
         pickle.dump(epoch_total_loss_values, f)
-    with open(MODEL_PATH/f"{pref}_main_metric_values.pkl", "wb") as f:
+    with open(MODEL_PATH/f"{pref}_main_validation.pkl", "wb") as f:
         pickle.dump(main_metric_values, f)
-    with open(MODEL_PATH/f"{pref}_aux_metric_values.pkl", "wb") as f:
+    with open(MODEL_PATH/f"{pref}_aux_validation.pkl", "wb") as f:
         pickle.dump(aux_metric_values, f)
 
 
