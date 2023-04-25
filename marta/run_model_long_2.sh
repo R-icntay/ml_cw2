@@ -15,6 +15,6 @@ date
 export PATH=/share/apps/python-3.8.5-shared/bin:$PATH
 export LD_LIBRARY_PATH=/share/apps/python-3.8.5-shared/lib:$LD_LIBRARY_PATH
 
-python3 main_copy.py 
+python3 main.py 
 
 date

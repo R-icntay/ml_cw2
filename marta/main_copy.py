@@ -32,7 +32,7 @@ set_determinism(seed = 2056)
 
 # Path to data
 img_path = Path("../data")
-train_files, val_files, test_files = split_data(img_path, scale=28)
+train_files, val_files, test_files = split_data(img_path)
 
 # Create transforms for training
 train_transforms, val_transforms, pred_main, label_main, pred_aux, label_aux = get_transforms()
