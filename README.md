@@ -13,7 +13,7 @@ conda install -c anaconda pathlib
 ```
 
 ## 3. Train & test the models 
-Modify the first few lines of code in the file `main_tests.py`:
+Modify the first few lines of code in the file `main.py`:
 ```
 # Choose whether to train and/or test model(s)
 TRAIN           = 1
