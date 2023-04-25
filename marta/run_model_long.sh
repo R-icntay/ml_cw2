@@ -1,10 +1,10 @@
-#$ -l tmem=32G,h_vmem=32G
+#$ -l tmem=64G,h_vmem=64G
 #$ -l h_rt=10:00:00
 #$ -l gpu=true
 
 #$ -S /bin/bash
 #$ -j y
-#$ -N Multi-task
+#$ -N Multi-task-long
 #$ -V
 #$ -wd /home/mmasramo/ml_cw2/marta
 

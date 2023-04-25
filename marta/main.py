@@ -7,7 +7,8 @@ from model          import MTLResidualAttention3DUnet
 from train_model    import train_model
 from test_model     import test_model
 
-TEST = 0
+# If TRUE, evaluate test data
+TEST = 1
 
 # Set deterministic training for reproducibility
 set_determinism(seed = 2056)

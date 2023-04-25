@@ -1,4 +1,8 @@
 def modify_labels(labels, organs):
+    """
+    Change labels so that the targetted sections are numbered from 1.0.
+    """
+    
     all_org = organs['all']
     main = organs['main']
     aux  = organs['aux']

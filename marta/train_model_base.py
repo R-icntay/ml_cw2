@@ -36,13 +36,12 @@ def set_model_params(model):
     loss_function       = DiceLoss(to_onehot_y = True, softmax = True, include_background=False) # For segmentation Expects BNHW[D] input i.e. batch, channel, height, width, depth, performs softmax on the channel dimension to get a probability distribution
     optimizer           = torch.optim.Adam(model.parameters(), (1e-3)/4) # Decreased the loss after getting a somewhat good model
     dice_metric_main    = DiceMetric(include_background=False, reduction="mean")# Collect the loss and metric values for every iteration
-    dice_metric_aux     = DiceMetric(include_background=False, reduction="mean")
     scheduler           = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max = 60, eta_min = 1e-6) #** Adopt a cosine annealing learning rate schedule which reduces the learning rate as the training progresses
     
-    return loss_function, optimizer, dice_metric_main, dice_metric_aux, scheduler
+    return loss_function, optimizer, dice_metric_main, scheduler
 
 
-def save_results(MODEL_NAME, MODEL_PATH, epoch_loss_values, epoch_aux_loss_values, epoch_total_loss_values, main_metric_values, aux_metric_values):
+def save_results(MODEL_NAME, MODEL_PATH, epoch_loss_values, epoch_total_loss_values, main_metric_values):
     """
     Save performance metrics.
     """
@@ -51,23 +50,19 @@ def save_results(MODEL_NAME, MODEL_PATH, epoch_loss_values, epoch_aux_loss_value
     pref = f"{MODEL_NAME.split('.')[0]}"
     with open(MODEL_PATH/f"{pref}_epoch_loss_values.pkl", "wb") as f:
         pickle.dump(epoch_loss_values, f)
-    with open(MODEL_PATH/f"{pref}_epoch_aux_loss_values.pkl", "wb") as f:
-        pickle.dump(epoch_aux_loss_values, f)
     with open(MODEL_PATH/f"{pref}_epoch_total_loss_values.pkl", "wb") as f:
         pickle.dump(epoch_total_loss_values, f)
     with open(MODEL_PATH/f"{pref}_main_metric_values.pkl", "wb") as f:
         pickle.dump(main_metric_values, f)
-    with open(MODEL_PATH/f"{pref}_aux_metric_values.pkl", "wb") as f:
-        pickle.dump(aux_metric_values, f)
 
 
-def train_model(model, device, train_files, train_transforms, val_files, val_transforms, organs, pred_main, label_main, pred_aux, label_aux):
+def train_model_base(model, device, train_files, train_transforms, val_files, val_transforms, organs, pred_main, label_main, pred_aux, label_aux):
     """
     Train the model on the training dataset and evaluate the validation dataset.
     """
     
     train_dl, val_dl = set_data(train_files, train_transforms, val_files, val_transforms)
-    loss_function, optimizer, dice_metric_main, dice_metric_aux, scheduler = set_model_params(model)
+    loss_function, optimizer, dice_metric_main, scheduler = set_model_params(model)
     
     # Create model directory
     MODEL_PATH = Path("models")
@@ -80,14 +75,7 @@ def train_model(model, device, train_files, train_transforms, val_files, val_tra
     best_metric             = -1
     best_metric_epoch       = -1
     epoch_loss_values       = []
-    epoch_aux_loss_values   = []
-    epoch_total_loss_values = []
     main_metric_values      = []
-    aux_metric_values       = []
-
-    # Loss weights
-    main_weight = 1.1
-    aux_weight  = 1.5
     
     print("-" * 20)
     print("Starting model training...")
@@ -100,8 +88,6 @@ def train_model(model, device, train_files, train_transforms, val_files, val_tra
         # Put the model into training mode
         model.train()
         epoch_loss = 0
-        epoch_aux_loss = 0
-        epoch_total_loss = 0
         step = 0
         
         for batch in train_dl:
@@ -109,18 +95,14 @@ def train_model(model, device, train_files, train_transforms, val_files, val_tra
             inputs = batch["image"].permute(0, 1, 4, 2, 3).to(device)
             labels = batch["mask"].to(device) # Permute beccause of torch upsample
             
-            main_labels, aux_labels = modify_labels(labels, organs)
+            main_labels = modify_labels(labels, organs)
 
             # Forward pass
-            main_seg, aux_seg = model(inputs) 
-            main_seg, aux_seg = main_seg.permute(0, 1, 3, 4, 2), aux_seg.permute(0, 1, 3, 4, 2) # Permute back to BNHWD
+            main_seg = model(inputs) 
+            main_seg = main_seg.permute(0, 1, 3, 4, 2) # Permute back to BNHWD
 
-            # Compute the loss functions
-            main_seg_loss = loss_function(main_seg, main_labels)
-            aux_seg_loss = loss_function(aux_seg, aux_labels)
-
-            # Compute the total loss
-            loss = main_weight * main_seg_loss + aux_weight * aux_seg_loss
+            # Compute the loss
+            loss = loss_function(main_seg, main_labels) 
 
             # Zero the gradients
             optimizer.zero_grad()
@@ -132,23 +114,15 @@ def train_model(model, device, train_files, train_transforms, val_files, val_tra
             optimizer.step()
 
             # Add the loss to the epoch loss
-            epoch_loss = epoch_loss + main_seg_loss.item()
-            epoch_aux_loss = epoch_aux_loss + aux_seg_loss.item()
-            epoch_total_loss = epoch_total_loss + loss.item()
+            epoch_loss          = epoch_loss + loss.item()
         
         # Compute the average loss of the epoch
         epoch_loss          = epoch_loss        / step
-        epoch_aux_loss      = epoch_aux_loss    / step
-        epoch_total_loss    = epoch_total_loss  / step
         epoch_loss_values.append(epoch_loss)
-        epoch_total_loss_values.append(epoch_total_loss)
-        epoch_aux_loss_values.append(epoch_aux_loss)
 
         if epoch % print_interval == 0:
             # Print the average loss of the epoch
             print(f"\nEpoch {epoch} average dice loss for main task: {epoch_loss:.4f}")
-            print(f"\nEpoch {epoch} average dice loss for aux task: {epoch_aux_loss:.4f}")
-            print(f"\nEpoch {epoch} average total loss for both tasks: {epoch_total_loss:.4f}")
 
         # Step the scheduler after every epoch
         scheduler.step()
@@ -165,33 +139,25 @@ def train_model(model, device, train_files, train_transforms, val_files, val_tra
                 # Loop through the validation data
                 for val_data in val_dl:
                     val_inputs, val_labels = val_data["image"].permute(0, 1, 4, 2, 3).to(device), val_data["mask"].to(device)
-                    val_main_labels, val_aux_labels = modify_labels(val_labels, organs)
+                    val_main_labels, = modify_labels(val_labels, organs)
 
                     # Forward pass
-                    val_main_outputs, val_aux_outputs = model(val_inputs)
-                    val_main_outputs, val_aux_outputs = val_main_outputs.permute(0, 1, 3, 4, 2), val_aux_outputs.permute(0, 1, 3, 4, 2)
+                    val_main_outputs = model(val_inputs)
+                    val_main_outputs = val_main_outputs.permute(0, 1, 3, 4, 2)
 
                     # Transform main outputs and labels to calculate inference loss
                     val_main_outputs    = [pred_main(i) for i in decollate_batch(val_main_outputs)]
                     val_main_labels     = [label_main(i) for i in decollate_batch(val_main_labels)]
 
-                    # Transform aux outputs and labels to calculate inference loss
-                    val_aux_outputs     = [pred_aux(i) for i in decollate_batch(val_aux_outputs)]
-                    val_aux_labels      = [label_aux(i) for i in decollate_batch(val_aux_labels)]
-
                     # Compute dice metric for current iteration
                     dice_metric_main(y_pred = val_main_outputs, y = val_main_labels)
-                    dice_metric_aux(y_pred = val_aux_outputs, y = val_aux_labels)
 
                 # Compute the average metric value across all iterations
                 main_metric = dice_metric_main.aggregate().item()
-                aux_metric = dice_metric_aux.aggregate().item()
                 main_metric_values.append(main_metric)
-                aux_metric_values.append(aux_metric)
                 
                 # Reset the metric for next validation run
                 dice_metric_main.reset()
-                dice_metric_aux.reset()
 
                 # If the metric is better than the best seen so far, save the model
                 if main_metric > best_metric:
@@ -203,13 +169,12 @@ def train_model(model, device, train_files, train_transforms, val_files, val_tra
                 print(
                     f"\nCurrent epoch: {epoch} current mean dice for main task: {main_metric:.4f}"
                     f"\nBest mean dice for main task: {best_metric:.4f} at epoch: {best_metric_epoch}"
-                    f"\nCurrent epoch: {epoch} current mean dice for aux task: {aux_metric:.4f}"
                     )
                 
     # When training is complete:
     print(f"Done training! Best mean dice: {best_metric:.4f} at epoch: {best_metric_epoch}")
     
-    save_results(MODEL_NAME, MODEL_PATH, epoch_loss_values, epoch_aux_loss_values, epoch_total_loss_values, main_metric_values, aux_metric_values)
+    save_results(MODEL_NAME, MODEL_PATH, epoch_loss_values, main_metric_values)
     
 
                     

@@ -4,9 +4,20 @@ from shutil import copyfile
 import os
 
 def split_data(img_path):
+    """
+    Read all images and divide into training, validation and test sets.
+    """
+    
     print("-" * 40)
     print("Splitting data into train-validate-test sets...")
     
+    # Delete two images that do not have segmentation masks
+    for file in ['001001_img.nii', '005057_img.nii']:
+        if os.path.exists(Path(img_path / file)):
+            os.remove(Path(img_path / file))
+        else:
+            print("The file does not exist")
+        
     # Read all files ending with _img.nii
     img_files   = list(img_path.glob("*_img.nii")) # Image and mask are in the same folder
     num_images  = len(img_files)
@@ -57,22 +68,16 @@ def split_data(img_path):
     train_masks     = sorted(train_mask_dir.glob("*"))
     train_files     = [{"image": image_name, "mask": mask_name} for image_name, mask_name in zip(train_images, train_masks)]
     
-    print(len(train_files))
-
     # Put the validation images and masks in a dictionary
     val_images      = sorted(val_image_dir.glob("*"))
     val_masks       = sorted(val_mask_dir.glob("*"))
     val_files       = [{"image": image_name, "mask": mask_name} for image_name, mask_name in zip(val_images, val_masks)]
-
-    print(len(val_files))
     
     # Put the test images and masks in a dictionary
     test_images     = sorted(test_image_dir.glob("*"))
     test_masks      = sorted(test_mask_dir.glob("*"))
     test_files      = [{"image": image_name, "mask": mask_name} for image_name, mask_name in zip(test_images, test_masks)]
-    
-    print(len(test_files))
-    
+        
     print('Images have been divided into train-validate-test sets.')
     print('Total number of images: ', num_images)
     print('Number of images train-validate-test: ', train_split, '-', val_split, '-', test_split)
