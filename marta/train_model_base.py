@@ -5,14 +5,9 @@ from monai.losses           import DiceLoss
 from monai.metrics          import DiceMetric
 from pathlib                import Path
 from labels                 import modify_labels
-            
-BATCH_SIZE      = 2
-max_epochs      = 100
-val_interval    = 10
-print_interval  = 10
 
 
-def set_data(train_files, train_transforms, val_files, val_transforms):
+def set_data(train_files, train_transforms, val_files, val_transforms, BATCH_SIZE):
     """
     Create dataloader for test set.
     """
@@ -54,12 +49,16 @@ def save_results(MODEL_NAME, MODEL_PATH, epoch_loss_values, main_metric_values):
         pickle.dump(main_metric_values, f)
 
 
-def train_model_base(model, device, train_files, train_transforms, val_files, val_transforms, organs, pred_main, label_main, pred_aux, label_aux):
+def train_model_base(model, device, params, train_files, train_transforms, val_files, val_transforms, organs, pred_main, label_main, pred_aux, label_aux):
     """
     Train the model on the training dataset and evaluate the validation dataset.
     """
+    BATCH_SIZE      = params['BATCH_SIZE']
+    MAX_EPOCHS      = params['MAX_EPOCHS']
+    VAL_INTERVAL    = params['VAL_INTERVAL']
+    PRINT_INTERVAL  = params['PRINT_INTERVAL']
     
-    train_dl, val_dl = set_data(train_files, train_transforms, val_files, val_transforms)
+    train_dl, val_dl = set_data(train_files, train_transforms, val_files, val_transforms, BATCH_SIZE)
     loss_function, optimizer, dice_metric_main, scheduler = set_model_params(model)
     
     # Create model directory
@@ -78,10 +77,10 @@ def train_model_base(model, device, train_files, train_transforms, val_files, va
     print("-" * 20)
     print("Starting model training...")
     
-    for epoch in range(1,max_epochs):
-        if epoch % print_interval == 0:
+    for epoch in range(1,MAX_EPOCHS):
+        if epoch % PRINT_INTERVAL == 0:
             print("-" * 20)
-            print(f"Epoch {epoch} / {max_epochs}")
+            print(f"Epoch {epoch} / {MAX_EPOCHS}")
         
         # Put the model into training mode
         model.train()
@@ -118,7 +117,7 @@ def train_model_base(model, device, train_files, train_transforms, val_files, va
         epoch_loss = epoch_loss        / step
         epoch_loss_values.append(epoch_loss)
 
-        if epoch % print_interval == 0:
+        if epoch % PRINT_INTERVAL == 0:
             # Print the average loss of the epoch
             print(f"\nEpoch {epoch} average dice loss for main task: {epoch_loss:.4f}")
 
@@ -126,7 +125,7 @@ def train_model_base(model, device, train_files, train_transforms, val_files, va
         scheduler.step()
 
         # Print loss and evaluate model when epoch is divisible by val_interval
-        if epoch % val_interval == 0:
+        if epoch % VAL_INTERVAL == 0:
             print("-" * 40)
             print("Testing on validation data...")
             

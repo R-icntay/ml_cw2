@@ -18,6 +18,14 @@ BASE_CASE       = 1
 AUX_SEGMENT     = 1
 AUX_RECONSTRUCT = 0
 
+# Parameters
+params = {
+    'BATCH_SIZE':       2,
+    'MAX_EPOCHS':       100,
+    'VAL_INT':          10,
+    'PRINT_INT':        10
+}
+
 # Set deterministic training for reproducibility
 set_determinism(seed = 2056)
 
@@ -46,9 +54,9 @@ if BASE_CASE:
     model  = ResidualAttention3DUnet(in_channels = 1, out_channels = len(organs['main'])+1).to(device) 
     
     if TRAIN:
-        train_model_base(model, device, train_files, train_transforms, val_files, val_transforms, organs, pred_main, label_main)
+        train_model_base(model, device, params, train_files, train_transforms, val_files, val_transforms, organs, pred_main, label_main)
     if TEST:
-        test_model_base(model, device, test_files, val_transforms, organs, pred_main, label_main)
+        test_model_base(model, device, params, test_files, val_transforms, organs, pred_main, label_main)
 
 
 ############# AUXILIARY TASK - SEGMENT 3 EXTRA STRUCTURES #############
@@ -58,9 +66,9 @@ if AUX_SEGMENT:
     model = MTLResidualAttention3DUnet(in_channels = 1, main_out_channels = len(organs['main'])+1, aux_out_channels = len(organs['aux'])+1).to(device) 
     
     if TRAIN:
-        train_model(model, device, train_files, train_transforms, val_files, val_transforms, organs, pred_main, label_main, pred_aux, label_aux)
+        train_model(model, device, params, train_files, train_transforms, val_files, val_transforms, organs, pred_main, label_main, pred_aux, label_aux)
     if TEST:
-        test_model(model, device, test_files, val_transforms, organs, pred_main, label_main, pred_aux, label_aux)
+        test_model(model, device, params, test_files, val_transforms, organs, pred_main, label_main, pred_aux, label_aux)
     
     
 ############# AUXILIARY TASK - RECONSTRUCTION #############

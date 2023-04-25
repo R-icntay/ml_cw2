@@ -5,9 +5,7 @@ from monai.metrics          import DiceMetric
 from pathlib                import Path
 from labels                 import modify_labels
 
-BATCH_SIZE      = 2
-
-def set_data(val_files, val_transforms):
+def set_data(val_files, val_transforms, BATCH_SIZE):
     """
     Create dataloader for test set.
     """
@@ -41,12 +39,13 @@ def save_results(MODEL_NAME, MODEL_PATH, main_metric_values):
         pickle.dump(main_metric_values, f)
 
 
-def test_model_base(model, device, val_files, val_transforms, organs_dict, pred_main, label_main):
+def test_model_base(model, device, params, val_files, val_transforms, organs_dict, pred_main, label_main):
     """
     Evaluate the test dataset
     """
+    BATCH_SIZE = params['BATCH_SIZE']
     
-    val_dl              = set_data(val_files, val_transforms)
+    val_dl              = set_data(val_files, val_transforms, BATCH_SIZE)
     dice_metric_main    = set_model_params()
     
     # Model save path

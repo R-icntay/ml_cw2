@@ -35,9 +35,13 @@ def split_data(img_path, scale=1):
     random.shuffle(img_files)
 
     # Split the dataset
-    train_images    = img_files[:train_split]
+    """train_images    = img_files[:train_split]
     val_images      = img_files[train_split:(train_split + val_split)]
-    test_images     = img_files[(train_split + val_split): ]
+    test_images     = img_files[(train_split + val_split): int(num_images/scale)]"""
+    
+    train_images    = img_files[:2]
+    val_images      = img_files[2:4]
+    test_images     = img_files[4:6]
 
     # Create train, validation and test directories
     train_image_dir     = Path(img_path / "train_images")

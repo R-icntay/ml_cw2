@@ -10,6 +10,14 @@ from test_model     import test_model
 # If TRUE, evaluate test data
 TEST = 1
 
+# Parameters
+params = {
+    'BATCH_SIZE':       2,
+    'MAX_EPOCHS':       100,
+    'VAL_INT':          10,
+    'PRINT_INT':        10
+}
+
 # Set deterministic training for reproducibility
 set_determinism(seed = 2056)
 
@@ -32,6 +40,6 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model  = MTLResidualAttention3DUnet(in_channels = 1, main_out_channels = len(organs['main'])+1, aux_out_channels = len(organs['aux'])+1).to(device) #Main: 2 structures + background, Aux: 3 structures + background
 
 
-train_model(model, device, train_files, train_transforms, val_files, val_transforms, organs, pred_main, label_main, pred_aux, label_aux)
+train_model(model, device, params, train_files, train_transforms, val_files, val_transforms, organs, pred_main, label_main, pred_aux, label_aux)
 if TEST:
-    test_model(model, device, test_files, val_transforms, organs, pred_main, label_main, pred_aux, label_aux)
+    test_model(model, device, params, test_files, val_transforms, organs, pred_main, label_main, pred_aux, label_aux)
