@@ -14,8 +14,8 @@ TEST = 1
 params = {
     'BATCH_SIZE':       2,
     'MAX_EPOCHS':       100,
-    'VAL_INT':          10,
-    'PRINT_INT':        10
+    'VAL_INTERVAL':          10,
+    'PRINT_INTERVAL':        10
 }
 
 # Set deterministic training for reproducibility
@@ -42,4 +42,5 @@ model  = MTLResidualAttention3DUnet(in_channels = 1, main_out_channels = len(org
 
 train_model(model, device, params, train_files, train_transforms, val_files, val_transforms, organs, pred_main, label_main, pred_aux, label_aux)
 if TEST:
+    torch.cuda.empty_cache()
     test_model(model, device, params, test_files, val_transforms, organs, pred_main, label_main, pred_aux, label_aux)

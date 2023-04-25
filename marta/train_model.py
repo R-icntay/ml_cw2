@@ -1,10 +1,13 @@
 import torch
+import torch.nn as nn
 import pickle
-from monai.data             import DataLoader, Dataset, decollate_batch
-from monai.losses           import DiceLoss
-from monai.metrics          import DiceMetric
-from pathlib                import Path
-from labels                 import modify_labels
+from monai.data                 import DataLoader, Dataset, decollate_batch
+from monai.losses               import DiceLoss
+from monai.losses.ssim_loss     import SSIMLoss
+from monai.metrics              import DiceMetric
+from monai.metrics.regression   import SSIMMetric
+from pathlib                    import Path
+from labels                     import modify_labels
 
 
 def set_data(train_files, train_transforms, val_files, val_transforms, BATCH_SIZE):
@@ -22,19 +25,26 @@ def set_data(train_files, train_transforms, val_files, val_transforms, BATCH_SIZ
     return train_dl, val_dl
 
 
-def set_model_params(model):
+def set_model_params(model, TASK):
     """
     Set model parameters and metrics for evaluation.
     """
     
     # Input image has eight anatomical structures of planning interest
-    loss_function       = DiceLoss(to_onehot_y = True, softmax = True, include_background=False) # For segmentation Expects BNHW[D] input i.e. batch, channel, height, width, depth, performs softmax on the channel dimension to get a probability distribution
-    optimizer           = torch.optim.Adam(model.parameters(), (1e-3)/4) # Decreased the loss after getting a somewhat good model
-    dice_metric_main    = DiceMetric(include_background=False, reduction="mean")# Collect the loss and metric values for every iteration
-    dice_metric_aux     = DiceMetric(include_background=False, reduction="mean")
-    scheduler           = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max = 60, eta_min = 1e-6) #** Adopt a cosine annealing learning rate schedule which reduces the learning rate as the training progresses
+    loss_main       = DiceLoss(to_onehot_y = True, softmax = True, include_background=False) 
+    metric_main     = DiceMetric(include_background=False, reduction="mean")
     
-    return loss_function, optimizer, dice_metric_main, dice_metric_aux, scheduler
+    if TASK == 'SEGMENT':
+        loss_aux    = DiceLoss(to_onehot_y = True, softmax = True, include_background=False) 
+        metric_aux  = DiceMetric(include_background=False, reduction="mean")
+    else:
+        loss_aux    = SSIMLoss(reduction='none')
+        metric_aux  = SSIMMetric(reduction='none')
+        
+    optimizer       = torch.optim.Adam(model.parameters(), (1e-3)/4) # Decreased the loss after getting a somewhat good model
+    scheduler       = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max = 60, eta_min = 1e-6) #** Adopt a cosine annealing learning rate schedule which reduces the learning rate as the training progresses
+    
+    return loss_main, loss_aux, metric_main, metric_aux, optimizer, scheduler
 
 
 def save_results(MODEL_NAME, MODEL_PATH, epoch_loss_values, epoch_aux_loss_values, epoch_total_loss_values, main_metric_values, aux_metric_values):
@@ -64,9 +74,10 @@ def train_model(model, device, params, train_files, train_transforms, val_files,
     MAX_EPOCHS      = params['MAX_EPOCHS']
     VAL_INTERVAL    = params['VAL_INTERVAL']
     PRINT_INTERVAL  = params['PRINT_INTERVAL']
+    TASK            = params['TASK']
     
     train_dl, val_dl = set_data(train_files, train_transforms, val_files, val_transforms, BATCH_SIZE)
-    loss_function, optimizer, dice_metric_main, dice_metric_aux, scheduler = set_model_params(model)
+    loss_main, loss_aux, metric_main, metric_aux, optimizer, scheduler = set_model_params(model, TASK)
     
     # Create model directory
     MODEL_PATH = Path("models")
@@ -115,9 +126,12 @@ def train_model(model, device, params, train_files, train_transforms, val_files,
             main_seg, aux_seg = main_seg.permute(0, 1, 3, 4, 2), aux_seg.permute(0, 1, 3, 4, 2) # Permute back to BNHWD
 
             # Compute the loss functions
-            main_seg_loss = loss_function(main_seg, main_labels)
-            aux_seg_loss = loss_function(aux_seg, aux_labels)
-
+            main_seg_loss = loss_main(main_seg, main_labels)
+            if TASK == 'SEGMENT':
+                aux_seg_loss = loss_aux(aux_seg, aux_labels)
+            else:
+                aux_seg_loss = loss_aux(inputs, aux_seg)
+                
             # Compute the total loss
             loss = main_weight * main_seg_loss + aux_weight * aux_seg_loss
 
@@ -145,8 +159,8 @@ def train_model(model, device, params, train_files, train_transforms, val_files,
 
         if epoch % PRINT_INTERVAL == 0:
             # Print the average loss of the epoch
-            print(f"\nEpoch {epoch} average dice loss for main task: {epoch_loss:.4f}")
-            print(f"\nEpoch {epoch} average dice loss for aux task: {epoch_aux_loss:.4f}")
+            print(f"\nEpoch {epoch} average loss for main task: {epoch_loss:.4f}")
+            print(f"\nEpoch {epoch} average loss for aux task: {epoch_aux_loss:.4f}")
             print(f"\nEpoch {epoch} average total loss for both tasks: {epoch_total_loss:.4f}")
 
         # Step the scheduler after every epoch
@@ -178,19 +192,22 @@ def train_model(model, device, params, train_files, train_transforms, val_files,
                     val_aux_outputs     = [pred_aux(i) for i in decollate_batch(val_aux_outputs)]
                     val_aux_labels      = [label_aux(i) for i in decollate_batch(val_aux_labels)]
 
-                    # Compute dice metric for current iteration
-                    dice_metric_main(y_pred = val_main_outputs, y = val_main_labels)
-                    dice_metric_aux(y_pred = val_aux_outputs, y = val_aux_labels)
-
+                    # Compute metric for current iteration
+                    metric_main(y_pred = val_main_outputs, y = val_main_labels)
+                    if TASK == 'SEGMENT':
+                        metric_aux(y_pred = val_aux_outputs, y = val_aux_labels)
+                    else:
+                        metric_aux(y_pred = val_aux_outputs, y = val_inputs)
+                        
                 # Compute the average metric value across all iterations
-                main_metric = dice_metric_main.aggregate().item()
-                aux_metric = dice_metric_aux.aggregate().item()
+                main_metric = metric_main.aggregate().item()
+                aux_metric  = metric_aux.aggregate().item()
                 main_metric_values.append(main_metric)
                 aux_metric_values.append(aux_metric)
                 
                 # Reset the metric for next validation run
-                dice_metric_main.reset()
-                dice_metric_aux.reset()
+                metric_main.reset()
+                metric_aux.reset()
 
                 # If the metric is better than the best seen so far, save the model
                 if main_metric > best_metric:
@@ -202,7 +219,7 @@ def train_model(model, device, params, train_files, train_transforms, val_files,
                 print(
                     f"\nCurrent epoch: {epoch} current mean dice for main task: {main_metric:.4f}"
                     f"\nBest mean dice for main task: {best_metric:.4f} at epoch: {best_metric_epoch}"
-                    f"\nCurrent epoch: {epoch} current mean dice for aux task: {aux_metric:.4f}"
+                    f"\nCurrent epoch: {epoch} current mean metric for aux task: {aux_metric:.4f}"
                     )
                 
     # When training is complete:

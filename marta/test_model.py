@@ -1,9 +1,10 @@
 import torch
 import pickle
-from monai.data             import DataLoader, Dataset, decollate_batch
-from monai.metrics          import DiceMetric
-from pathlib                import Path
-from labels                 import modify_labels
+from monai.data                 import DataLoader, Dataset, decollate_batch
+from monai.metrics              import DiceMetric
+from monai.metrics.regression   import SSIMMetric
+from pathlib                    import Path
+from labels                     import modify_labels
 
 def set_data(val_files, val_transforms, BATCH_SIZE):
     """
@@ -17,16 +18,19 @@ def set_data(val_files, val_transforms, BATCH_SIZE):
     return val_dl
 
 
-def set_model_params():
+def set_model_params(TASK):
     """
     Set metrics for evaluation.
     """
     
     # Input image has eight anatomical structures of planning interest
-    dice_metric_main    = DiceMetric(include_background=False, reduction="mean")# Collect the loss and metric values for every iteration
-    dice_metric_aux     = DiceMetric(include_background=False, reduction="mean")
+    metric_main    = DiceMetric(include_background=False, reduction="mean")# Collect the loss and metric values for every iteration
+    if TASK == 'SEGMENT':
+        metric_aux  = DiceMetric(include_background=False, reduction="mean")
+    else:
+        metric_aux  = SSIMMetric(reduction='none')
     
-    return dice_metric_main, dice_metric_aux
+    return metric_main, metric_aux
 
 
 def save_results(MODEL_NAME, MODEL_PATH, main_metric_values, aux_metric_values):
@@ -47,9 +51,10 @@ def test_model(model, device, params, val_files, val_transforms, organs_dict, pr
     Evaluate the test dataset
     """
     BATCH_SIZE = params['BATCH_SIZE']
+    TASK       = params['TASK']
     
-    val_dl                              = set_data(val_files, val_transforms, BATCH_SIZE)
-    dice_metric_main, dice_metric_aux   = set_model_params()
+    val_dl                  = set_data(val_files, val_transforms, BATCH_SIZE)
+    metric_main, metric_aux = set_model_params(TASK)
     
     # Model save path
     MODEL_PATH = Path("models")
@@ -82,16 +87,19 @@ def test_model(model, device, params, val_files, val_transforms, organs_dict, pr
             val_aux_labels      = [label_aux(i) for i in decollate_batch(val_aux_labels)]
 
             # Compute dice metric for current iteration
-            dice_metric_main(y_pred = val_main_outputs, y = val_main_labels)
-            dice_metric_aux(y_pred = val_aux_outputs, y = val_aux_labels)
+            metric_main(y_pred = val_main_outputs, y = val_main_labels)
+            if TASK == 'SEGMENT':
+                metric_aux(y_pred = val_aux_outputs, y = val_aux_labels)
+            else:
+                metric_aux(y_pred = val_aux_outputs, y = val_inputs)
             
         # Compute the average metric value across all iterations
-        main_metric = dice_metric_main.aggregate().item()
-        aux_metric = dice_metric_aux.aggregate().item()
+        main_metric = metric_main.aggregate().item()
+        aux_metric  = metric_aux.aggregate().item()
         
     print(
         f"\nMean dice for main task: {main_metric:.4f}"
-        f"\nMean dice for aux task: {aux_metric:.4f}"
+        f"\nMean metric for aux task: {aux_metric:.4f}"
         )
     
     save_results(MODEL_NAME, MODEL_PATH, main_metric, aux_metric)

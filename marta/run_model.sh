@@ -1,4 +1,4 @@
-#$ -l tmem=16G,h_vmem=16G
+#$ -l tmem=32G,h_vmem=32G
 #$ -l h_rt=2:00:00
 #$ -l gpu=true
 
