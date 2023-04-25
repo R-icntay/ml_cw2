@@ -225,7 +225,7 @@ class ResidualAttention3DUnet(nn.Module):
         return x
     
     
-## AUXILIARY TASK IS SEGMENTATION
+######## AUXILIARY TASK - SEGMENTATION ########
 class MTLResidualAttention3DUnet(nn.Module):
     def __init__(self, in_channels, main_out_channels, aux_out_channels, device, n_groups = 4, n_channels = [32, 64, 128, 256, 512]):
         super().__init__()
@@ -339,7 +339,7 @@ class MTLResidualAttention3DUnet(nn.Module):
     
     
     
-## AUXILIARY TASK IS RECONSTRUCTION
+###### AUXILIARY TASK - RECONSTRUCTION ########
 class MTLResidualAttentionRecon3DUnet(nn.Module):
     def __init__(self, in_channels, out_channels, device, n_groups = 4, n_channels = [16, 32, 64, 128, 256]):
         super().__init__()

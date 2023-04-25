@@ -35,11 +35,11 @@ def save_results(MODEL_NAME, MODEL_PATH, main_metric_values):
     
     # Save metric values
     pref = f"{MODEL_NAME.split('.')[0]}"
-    with open(MODEL_PATH/f"{pref}_base_case_test.pkl", "wb") as f:
+    with open(MODEL_PATH/f"{pref}_test.pkl", "wb") as f:
         pickle.dump(main_metric_values, f)
 
 
-def test_model_base(model, device, params, val_files, val_transforms, organs_dict, pred_main, label_main):
+def test_model_base(model, device, params, val_files, val_transforms, organs_dict, pred_main, label_main, model_name):
     """
     Evaluate the test dataset
     """
@@ -50,7 +50,7 @@ def test_model_base(model, device, params, val_files, val_transforms, organs_dic
     
     # Model save path
     MODEL_PATH = Path("models")
-    MODEL_NAME = "model.pth"
+    MODEL_NAME = model_name + ".pth"
     MODEL_SAVE_PATH = MODEL_PATH / MODEL_NAME
     
     model.load_state_dict(torch.load(MODEL_SAVE_PATH))
@@ -64,7 +64,7 @@ def test_model_base(model, device, params, val_files, val_transforms, organs_dic
         # Loop through the validation data
         for val_data in val_dl:
             val_inputs, val_labels = val_data["image"].permute(0, 1, 4, 2, 3).to(device), val_data["mask"].to(device)
-            val_main_labels        = modify_labels(val_labels, organs_dict)
+            val_main_labels, _     = modify_labels(val_labels, organs_dict)
 
             # Forward pass
             val_main_outputs = model(val_inputs)

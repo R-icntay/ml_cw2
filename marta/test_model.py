@@ -40,13 +40,13 @@ def save_results(MODEL_NAME, MODEL_PATH, main_metric_values, aux_metric_values):
     
     # Save metric values
     pref = f"{MODEL_NAME.split('.')[0]}"
-    with open(MODEL_PATH/f"{pref}_main_metric_values_test.pkl", "wb") as f:
+    with open(MODEL_PATH/f"{pref}_main_test.pkl", "wb") as f:
         pickle.dump(main_metric_values, f)
-    with open(MODEL_PATH/f"{pref}_aux_metric_values_test.pkl", "wb") as f:
+    with open(MODEL_PATH/f"{pref}_aux_test.pkl", "wb") as f:
         pickle.dump(aux_metric_values, f)
 
 
-def test_model(model, device, params, val_files, val_transforms, organs_dict, pred_main, label_main, pred_aux, label_aux):
+def test_model(model, device, params, val_files, val_transforms, organs_dict, pred_main, label_main, pred_aux, label_aux, model_name):
     """
     Evaluate the test dataset
     """
@@ -58,7 +58,7 @@ def test_model(model, device, params, val_files, val_transforms, organs_dict, pr
     
     # Model save path
     MODEL_PATH = Path("models")
-    MODEL_NAME = "model.pth"
+    MODEL_NAME = model_name + ".pth"
     MODEL_SAVE_PATH = MODEL_PATH / MODEL_NAME
     
     model.load_state_dict(torch.load(MODEL_SAVE_PATH))

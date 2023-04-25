@@ -43,13 +43,13 @@ def save_results(MODEL_NAME, MODEL_PATH, epoch_loss_values, main_metric_values):
     
     # Save epoch loss and metric values
     pref = f"{MODEL_NAME.split('.')[0]}"
-    with open(MODEL_PATH/f"{pref}_epoch_loss_base_case_train.pkl", "wb") as f:
+    with open(MODEL_PATH/f"{pref}_epoch_loss_train.pkl", "wb") as f:
         pickle.dump(epoch_loss_values, f)
-    with open(MODEL_PATH/f"{pref}_base_case_validate.pkl", "wb") as f:
+    with open(MODEL_PATH/f"{pref}_validate.pkl", "wb") as f:
         pickle.dump(main_metric_values, f)
 
 
-def train_model_base(model, device, params, train_files, train_transforms, val_files, val_transforms, organs, pred_main, label_main):
+def train_model_base(model, device, params, train_files, train_transforms, val_files, val_transforms, organs, pred_main, label_main, model_name):
     """
     Train the model on the training dataset and evaluate the validation dataset.
     """
@@ -66,7 +66,7 @@ def train_model_base(model, device, params, train_files, train_transforms, val_f
     MODEL_PATH.mkdir(parents=True, exist_ok=True)
 
     # Create model save path
-    MODEL_NAME = "model.pth"
+    MODEL_NAME = model_name + ".pth"
     MODEL_SAVE_PATH = MODEL_PATH / MODEL_NAME
 
     best_metric             = -1
@@ -92,7 +92,7 @@ def train_model_base(model, device, params, train_files, train_transforms, val_f
             inputs = batch["image"].permute(0, 1, 4, 2, 3).to(device)
             labels = batch["mask"].to(device) # Permute beccause of torch upsample
             
-            main_labels = modify_labels(labels, organs)
+            main_labels, _ = modify_labels(labels, organs)
 
             # Forward pass
             main_seg = model(inputs) 
@@ -136,7 +136,7 @@ def train_model_base(model, device, params, train_files, train_transforms, val_f
                 # Loop through the validation data
                 for val_data in val_dl:
                     val_inputs, val_labels = val_data["image"].permute(0, 1, 4, 2, 3).to(device), val_data["mask"].to(device)
-                    val_main_labels, = modify_labels(val_labels, organs)
+                    val_main_labels, _     = modify_labels(val_labels, organs)
 
                     # Forward pass
                     val_main_outputs = model(val_inputs)

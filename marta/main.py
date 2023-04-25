@@ -15,8 +15,9 @@ TEST            = 1
 
 # Choose which models to test
 BASE_CASE       = 1
-AUX_SEGMENT     = 1
-AUX_RECONSTRUCT = 0
+AUX_SEGMENT_3   = 1
+AUX_SEGMENT_6   = 1
+AUX_RECONSTRUCT = 1
 
 # Parameters
 params = {
@@ -31,7 +32,7 @@ set_determinism(seed = 2056)
 
 # Path to data
 img_path = Path("../data")
-train_files, val_files, test_files = split_data(img_path, scale=28)
+train_files, val_files, test_files = split_data(img_path)
 
 # Create transforms for training
 train_transforms, val_transforms, pred_main, label_main, pred_aux, label_aux = get_transforms()
@@ -44,33 +45,65 @@ all_organs =  ["Background", "Bladder", "Bone", "Obturator internus", "Transitio
 organs = {
     'all': all_organs,
     'main': ["Transition zone", "Central gland"],
-    'aux': [],
     'dict': {organ: idx for idx, organ in enumerate(all_organs)}
     }
 
+############# BASE CASE #############
+if BASE_CASE:
+    organs['aux']  = []
+    params['TASK'] = 'BASE_CASE'
+    model_name     = 'base_case'
+    model  = ResidualAttention3DUnet(in_channels = 1, out_channels = len(organs['main'])+1, device=device).to(device) 
+    
+    if TRAIN:
+        torch.cuda.empty_cache()
+        train_model_base(model, device, params, train_files, train_transforms, val_files, val_transforms, organs, pred_main, label_main, model_name)
+    if TEST:
+        torch.cuda.empty_cache()
+        test_model_base(model, device, params, test_files, val_transforms, organs, pred_main, label_main, model_name)
+
+
 ############# AUXILIARY TASK - SEGMENT 3 EXTRA STRUCTURES #############
-if AUX_SEGMENT:
+if AUX_SEGMENT_3:
     organs['aux']  = ["Rectum", "Seminal vesicle", "Neurovascular bundle"]
     params['TASK'] = 'SEGMENT'
-    model = MTLResidualAttention3DUnet(in_channels = 1, main_out_channels = len(organs['main'])+1, aux_out_channels = len(organs['aux'])+1).to(device) 
+    model_name     = 'auxiliary_segment_3'
+    model = MTLResidualAttention3DUnet(in_channels = 1, main_out_channels = len(organs['main'])+1, aux_out_channels = len(organs['aux'])+1, device=device).to(device) 
     
     if TRAIN:
         torch.cuda.empty_cache()
-        train_model(model, device, params, train_files, train_transforms, val_files, val_transforms, organs, pred_main, label_main, pred_aux, label_aux)
+        train_model(model, device, params, train_files, train_transforms, val_files, val_transforms, organs, pred_main, label_main, pred_aux, label_aux, model_name)
     if TEST:
         torch.cuda.empty_cache()
-        test_model(model, device, params, test_files, val_transforms, organs, pred_main, label_main, pred_aux, label_aux)
+        test_model(model, device, params, test_files, val_transforms, organs, pred_main, label_main, pred_aux, label_aux, model_name)
+        
         
 ############# AUXILIARY TASK - SEGMENT 6 EXTRA STRUCTURES #############
-if AUX_SEGMENT:
+if AUX_SEGMENT_6:
     organs['aux']  = ["Rectum", "Seminal vesicle", "Neurovascular bundle", "Bladder", "Bone", "Obturator internus"]
     params['TASK'] = 'SEGMENT'
-    model = MTLResidualAttention3DUnet(in_channels = 1, main_out_channels = len(organs['main'])+1, aux_out_channels = len(organs['aux'])+1).to(device) 
+    model_name     = 'auxiliary_segment_6'
+    model = MTLResidualAttention3DUnet(in_channels = 1, main_out_channels = len(organs['main'])+1, aux_out_channels = len(organs['aux'])+1, device=device).to(device) 
     
     if TRAIN:
         torch.cuda.empty_cache()
-        train_model(model, device, params, train_files, train_transforms, val_files, val_transforms, organs, pred_main, label_main, pred_aux, label_aux)
+        train_model(model, device, params, train_files, train_transforms, val_files, val_transforms, organs, pred_main, label_main, pred_aux, label_aux, model_name)
     if TEST:
         torch.cuda.empty_cache()
-        test_model(model, device, params, test_files, val_transforms, organs, pred_main, label_main, pred_aux, label_aux)
+        test_model(model, device, params, test_files, val_transforms, organs, pred_main, label_main, pred_aux, label_aux, model_name)
+    
+    
+############# AUXILIARY TASK - RECONSTRUCTION #############
+if AUX_RECONSTRUCT:
+    organs['aux']   = []
+    params['TASK'] = 'RECONSTRUCT'
+    model_name     = 'auxiliary_reconstruct'
+    model = MTLResidualAttentionRecon3DUnet(in_channels = 1, out_channels = len(organs['main'])+1, device=device).to(device) 
+    
+    if TRAIN:
+        torch.cuda.empty_cache()
+        train_model(model, device, params, train_files, train_transforms, val_files, val_transforms, organs, pred_main, label_main, pred_aux, label_aux, model_name)
+    if TEST:
+        torch.cuda.empty_cache()
+        test_model(model, device, params, test_files, val_transforms, organs, pred_main, label_main, pred_aux, label_aux, model_name)
     

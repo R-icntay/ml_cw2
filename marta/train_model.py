@@ -67,7 +67,7 @@ def save_results(MODEL_NAME, MODEL_PATH, epoch_loss_values, epoch_aux_loss_value
         pickle.dump(aux_metric_values, f)
 
 
-def train_model(model, device, params, train_files, train_transforms, val_files, val_transforms, organs, pred_main, label_main, pred_aux, label_aux):
+def train_model(model, device, params, train_files, train_transforms, val_files, val_transforms, organs, pred_main, label_main, pred_aux, label_aux, model_name):
     """
     Train the model on the training dataset and evaluate the validation dataset.
     """
@@ -85,7 +85,7 @@ def train_model(model, device, params, train_files, train_transforms, val_files,
     MODEL_PATH.mkdir(parents=True, exist_ok=True)
 
     # Create model save path
-    MODEL_NAME = "model.pth"
+    MODEL_NAME = model_name + ".pth"
     MODEL_SAVE_PATH = MODEL_PATH / MODEL_NAME
 
     best_metric             = -1
