@@ -4,7 +4,7 @@ import pickle
 from monai.data                 import DataLoader, Dataset, decollate_batch
 from monai.losses               import DiceLoss
 from monai.losses.ssim_loss     import SSIMLoss
-from monai.metrics              import DiceMetric
+from monai.metrics              import DiceMetric, MSEMetric
 from monai.metrics.regression   import SSIMMetric
 from pathlib                    import Path
 from labels                     import modify_labels
@@ -38,8 +38,9 @@ def set_model_params(model, TASK):
         loss_aux    = DiceLoss(to_onehot_y = True, softmax = True, include_background=False) 
         metric_aux  = DiceMetric(include_background=False, reduction="mean")
     else:
-        loss_aux    = SSIMLoss(reduction='none')
-        metric_aux  = SSIMMetric(reduction='none')
+        #loss_aux    = SSIMLoss()
+        loss_aux    = torch.nn.L1Loss()
+        metric_aux  = MSEMetric()
         
     optimizer       = torch.optim.Adam(model.parameters(), (1e-3)/4) # Decreased the loss after getting a somewhat good model
     scheduler       = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max = 60, eta_min = 1e-6) #** Adopt a cosine annealing learning rate schedule which reduces the learning rate as the training progresses
@@ -130,7 +131,7 @@ def train_model(model, device, params, train_files, train_transforms, val_files,
             if TASK == 'SEGMENT':
                 aux_seg_loss = loss_aux(aux_seg, aux_labels)
             else:
-                aux_seg_loss = loss_aux(inputs, aux_seg)
+                aux_seg_loss = loss_aux(aux_seg, inputs.permute(0, 1, 3, 4, 2))
                 
             # Compute the total loss
             loss = main_weight * main_seg_loss + aux_weight * aux_seg_loss
@@ -177,7 +178,9 @@ def train_model(model, device, params, train_files, train_transforms, val_files,
             with torch.inference_mode():
                 # Loop through the validation data
                 for val_data in val_dl:
-                    val_inputs, val_labels = val_data["image"].permute(0, 1, 4, 2, 3).to(device), val_data["mask"].to(device)
+                    val_inputs = val_data["image"].permute(0, 1, 4, 2, 3).to(device)
+                    val_labels = val_data["mask"].to(device)
+                    
                     val_main_labels, val_aux_labels = modify_labels(val_labels, organs)
 
                     # Forward pass
@@ -188,16 +191,16 @@ def train_model(model, device, params, train_files, train_transforms, val_files,
                     val_main_outputs    = [pred_main(i) for i in decollate_batch(val_main_outputs)]
                     val_main_labels     = [label_main(i) for i in decollate_batch(val_main_labels)]
 
-                    # Transform aux outputs and labels to calculate inference loss
-                    val_aux_outputs     = [pred_aux(i) for i in decollate_batch(val_aux_outputs)]
-                    val_aux_labels      = [label_aux(i) for i in decollate_batch(val_aux_labels)]
-
                     # Compute metric for current iteration
                     metric_main(y_pred = val_main_outputs, y = val_main_labels)
                     if TASK == 'SEGMENT':
+                        # Transform aux outputs and labels to calculate inference loss
+                        val_aux_outputs     = [pred_aux(i) for i in decollate_batch(val_aux_outputs)]
+                        val_aux_labels      = [label_aux(i) for i in decollate_batch(val_aux_labels)]
+                        
                         metric_aux(y_pred = val_aux_outputs, y = val_aux_labels)
                     else:
-                        metric_aux(y_pred = val_aux_outputs, y = val_inputs)
+                        metric_aux(y_pred = val_aux_outputs, y = inputs.permute(0, 1, 3, 4, 2))
                         
                 # Compute the average metric value across all iterations
                 main_metric = metric_main.aggregate().item()

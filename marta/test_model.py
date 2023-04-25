@@ -1,7 +1,7 @@
 import torch
 import pickle
 from monai.data                 import DataLoader, Dataset, decollate_batch
-from monai.metrics              import DiceMetric
+from monai.metrics              import DiceMetric, MSEMetric
 from monai.metrics.regression   import SSIMMetric
 from pathlib                    import Path
 from labels                     import modify_labels
@@ -28,7 +28,7 @@ def set_model_params(TASK):
     if TASK == 'SEGMENT':
         metric_aux  = DiceMetric(include_background=False, reduction="mean")
     else:
-        metric_aux  = SSIMMetric(reduction='none')
+        metric_aux  = MSEMetric()
     
     return metric_main, metric_aux
 
@@ -82,16 +82,16 @@ def test_model(model, device, params, val_files, val_transforms, organs_dict, pr
             val_main_outputs    = [pred_main(i) for i in decollate_batch(val_main_outputs)]
             val_main_labels     = [label_main(i) for i in decollate_batch(val_main_labels)]
 
-            # Transform aux outputs and labels to calculate inference loss
-            val_aux_outputs     = [pred_aux(i) for i in decollate_batch(val_aux_outputs)]
-            val_aux_labels      = [label_aux(i) for i in decollate_batch(val_aux_labels)]
-
             # Compute dice metric for current iteration
             metric_main(y_pred = val_main_outputs, y = val_main_labels)
             if TASK == 'SEGMENT':
+                # Transform aux outputs and labels to calculate inference loss
+                val_aux_outputs     = [pred_aux(i) for i in decollate_batch(val_aux_outputs)]
+                val_aux_labels      = [label_aux(i) for i in decollate_batch(val_aux_labels)]
+            
                 metric_aux(y_pred = val_aux_outputs, y = val_aux_labels)
             else:
-                metric_aux(y_pred = val_aux_outputs, y = val_inputs)
+                metric_aux(y_pred = val_aux_outputs, y = val_inputs.permute(0, 1, 3, 4, 2))
             
         # Compute the average metric value across all iterations
         main_metric = metric_main.aggregate().item()

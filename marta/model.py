@@ -87,9 +87,10 @@ class crop_and_concatenate(nn.Module):
 
 # Implement an attention block
 class attention_block(nn.Module):
-    def __init__(self, skip_channels, gate_channels, inter_channels = None, n_groups = 8):
+    def __init__(self, skip_channels, gate_channels, device, inter_channels = None, n_groups = 8):
         super().__init__()
-
+        self.device = device
+        
         if inter_channels is None:
             inter_channels = skip_channels // 2
 
@@ -144,7 +145,7 @@ class attention_block(nn.Module):
         # Perform element-wise multiplication
         skip_connection = torch.mul(skip_connection, attention_map)
 
-        skip_connection = nn.Conv3d(in_channels = skip_connection.shape[1], out_channels = skip_connection.shape[1], kernel_size = 1, bias=False).to(device)(skip_connection)
+        skip_connection = nn.Conv3d(in_channels = skip_connection.shape[1], out_channels = skip_connection.shape[1], kernel_size = 1, bias=False).to(self.device)(skip_connection)
         skip_connection = self.act(self.final_norm(skip_connection))
 
         return skip_connection
@@ -152,7 +153,7 @@ class attention_block(nn.Module):
 
 ## Implement a 3D residual attention U-Net
 class ResidualAttention3DUnet(nn.Module):
-    def __init__(self, in_channels, out_channels, n_groups = 4, n_channels = [16, 32, 64, 128, 256]):
+    def __init__(self, in_channels, out_channels, device, n_groups = 4, n_channels = [16, 32, 64, 128, 256]):
         super().__init__()
 
         # Define the contracting path: residual blocks followed by downsampling
@@ -165,7 +166,7 @@ class ResidualAttention3DUnet(nn.Module):
 
 
         # Define the attention blocks
-        self.attention_blocks = nn.ModuleList(attention_block(skip_channels = residuals_chans, gate_channels = gate_chans) for gate_chans, residuals_chans in
+        self.attention_blocks = nn.ModuleList(attention_block(skip_channels = residuals_chans, gate_channels = gate_chans, device=device) for gate_chans, residuals_chans in
                                               [(n_channels[4], n_channels[3]), (n_channels[3], n_channels[2]), (n_channels[2], n_channels[1]), (n_channels[1], n_channels[0])])
 
 
@@ -226,7 +227,7 @@ class ResidualAttention3DUnet(nn.Module):
     
 ## AUXILIARY TASK IS SEGMENTATION
 class MTLResidualAttention3DUnet(nn.Module):
-    def __init__(self, in_channels, main_out_channels, aux_out_channels, n_groups = 4, n_channels = [32, 64, 128, 256, 512]):
+    def __init__(self, in_channels, main_out_channels, aux_out_channels, device, n_groups = 4, n_channels = [32, 64, 128, 256, 512]):
         super().__init__()
 
         # Define the contracting path: residual blocks followed by downsampling
@@ -239,7 +240,7 @@ class MTLResidualAttention3DUnet(nn.Module):
 
         ## ------ Decoder block for segmenting main prostate zones: central, transition, background ------ ##
         # Define the attention blocks
-        self.attention_blocks_main = nn.ModuleList(attention_block(skip_channels = residuals_chans, gate_channels = gate_chans) for gate_chans, residuals_chans in
+        self.attention_blocks_main = nn.ModuleList(attention_block(skip_channels = residuals_chans, gate_channels = gate_chans, device=device) for gate_chans, residuals_chans in
                                               [(n_channels[4], n_channels[3]), (n_channels[3], n_channels[2]), (n_channels[2], n_channels[1]), (n_channels[1], n_channels[0])])
         
 
@@ -261,7 +262,7 @@ class MTLResidualAttention3DUnet(nn.Module):
 
         ## ------ Decoder block for segmenting the auxilliary zones: Bladder, Rectum, Seminal vesicle, Neurovascular bundle ------ ##
         # Define the attention blocks
-        self.attention_blocks_aux = nn.ModuleList(attention_block(skip_channels = residuals_chans, gate_channels = gate_chans) for gate_chans, residuals_chans in
+        self.attention_blocks_aux = nn.ModuleList(attention_block(skip_channels = residuals_chans, gate_channels = gate_chans, device=device) for gate_chans, residuals_chans in
                                               [(n_channels[4], n_channels[3]), (n_channels[3], n_channels[2]), (n_channels[2], n_channels[1]), (n_channels[1], n_channels[0])])
         
        # Define the expanding path: upsample blocks, followed by crop and concatenate, followed by residual blocks
@@ -340,7 +341,7 @@ class MTLResidualAttention3DUnet(nn.Module):
     
 ## AUXILIARY TASK IS RECONSTRUCTION
 class MTLResidualAttentionRecon3DUnet(nn.Module):
-    def __init__(self, in_channels, out_channels, n_groups = 4, n_channels = [16, 32, 64, 128, 256]):
+    def __init__(self, in_channels, out_channels, device, n_groups = 4, n_channels = [16, 32, 64, 128, 256]):
         super().__init__()
 
         # Define the contracting path: residual blocks followed by downsampling
@@ -353,7 +354,7 @@ class MTLResidualAttentionRecon3DUnet(nn.Module):
 
         ## ------ Decoder block for the segmentation task ------ ##
         # Define the attention blocks
-        self.attention_blocks = nn.ModuleList(attention_block(skip_channels = residuals_chans, gate_channels = gate_chans) for gate_chans, residuals_chans in
+        self.attention_blocks = nn.ModuleList(attention_block(skip_channels = residuals_chans, gate_channels = gate_chans, device=device) for gate_chans, residuals_chans in
                                               [(n_channels[4], n_channels[3]), (n_channels[3], n_channels[2]), (n_channels[2], n_channels[1]), (n_channels[1], n_channels[0])])
         
 
@@ -374,7 +375,7 @@ class MTLResidualAttentionRecon3DUnet(nn.Module):
 
         ## --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ##
         ###** Add second decoder path for image reconstruction **###
-        self.attention_blocks_recon = nn.ModuleList(attention_block(skip_channels = residuals_chans, gate_channels = gate_chans) for gate_chans, residuals_chans in
+        self.attention_blocks_recon = nn.ModuleList(attention_block(skip_channels = residuals_chans, gate_channels = gate_chans, device=device) for gate_chans, residuals_chans in
                                                 [(n_channels[4], n_channels[3]), (n_channels[3], n_channels[2]), (n_channels[2], n_channels[1]), (n_channels[1], n_channels[0])])
 
         self.upsamples_recon = nn.ModuleList(up_sample(in_chans, out_chans) for in_chans, out_chans in
