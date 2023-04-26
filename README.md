@@ -8,7 +8,7 @@
 ## 2. Set up the environment
 Run the following script to set up a new Conda environment and install the necessary packages:
 ```
-conda create --name mphy0041-cw2 -c conda-forge numpy nibabel matplotlib tensorflow=2.10 pytorch=1.12 monai pickle5
+conda create --name mphy0041-cw2 -c conda-forge numpy nibabel matplotlib tensorflow=2.10 pytorch=1.12 monai
 conda install -c anaconda pathlib
 ```
 
@@ -28,6 +28,6 @@ AUX_RECONSTRUCT = 1
 
 Run the following script on the command line:
 ```
-python main_tests.py
+python main.py
 ```
 
