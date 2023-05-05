@@ -8,6 +8,8 @@ regions of interest (ROIs) in T2-weighted MR images of pelvic is useful for imag
 planning for prostate cancer intervention. This main task may be assisted by segmenting a number of
 other surrounding structures or classification tasks to discriminating whether certain ROIs are present.
 
+Data used: [Cross-institution Male Pelvic Structures](https://zenodo.org/record/7013610)
+
 This project aims
 
 - to motivate and justify a main segmentation task, including understanding the
@@ -36,4 +38,4 @@ The steps for creating, training and making inference for these models can be fo
 
 ![Multi-task learning 3D U-Net](images/architecture.png "Multi-task learning 3D U-Net")
 
-*Image credits: (@martamasramon)[https://github.com/Martamasramon]*
+*Image credits: [@martamasramon](https://github.com/Martamasramon)*
