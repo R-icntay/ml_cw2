@@ -120,6 +120,7 @@ def train_model(model, device, params, train_files, train_transforms, val_files,
             inputs = batch["image"].permute(0, 1, 4, 2, 3).to(device)
             labels = batch["mask"].to(device) # Permute beccause of torch upsample
             
+            # Modify the main labels to match the output of the main decoder
             main_labels, aux_labels = modify_labels(labels, organs)
 
             # Forward pass
