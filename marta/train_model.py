@@ -42,8 +42,8 @@ def set_model_params(model, TASK):
         loss_aux    = torch.nn.L1Loss()
         metric_aux  = MSEMetric()
         
-    optimizer       = torch.optim.Adam(model.parameters(), (1e-3)/4) # Decreased the loss after getting a somewhat good model
-    scheduler       = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max = 60, eta_min = 1e-6) #** Adopt a cosine annealing learning rate schedule which reduces the learning rate as the training progresses
+    optimizer       = torch.optim.Adam(model.parameters(), (1e-3)/1) # Decreased the loss after getting a somewhat good model
+    scheduler       = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max = 100, eta_min = 1e-6) #** Adopt a cosine annealing learning rate schedule which reduces the learning rate as the training progresses
     
     return loss_main, loss_aux, metric_main, metric_aux, optimizer, scheduler
 
