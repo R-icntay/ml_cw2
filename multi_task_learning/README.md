@@ -34,4 +34,4 @@ In this project, four 3D unets were created:
 The steps for creating, training and making inference for these models can be found in the folder **mtl_unet_models**.
 
 
-![Multi-task learning 3D U-Net](images\architecture.png "Multi-task learning 3D U-Net")
+![Multi-task learning 3D U-Net](images/architecture.png "Multi-task learning 3D U-Net")
