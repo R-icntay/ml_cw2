@@ -40,7 +40,7 @@ def set_model_params(model, TASK):
     else:
         #loss_aux    = SSIMLoss()
         loss_aux    = torch.nn.L1Loss()
-        metric_aux  = MSEMetric()
+        metric_aux  = MSEMetric() # Do we use MSE or SSIM?
         
     optimizer       = torch.optim.Adam(model.parameters(), (1e-3)/1) # Decreased the loss after getting a somewhat good model
     scheduler       = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max = 100, eta_min = 1e-6) #** Adopt a cosine annealing learning rate schedule which reduces the learning rate as the training progresses
