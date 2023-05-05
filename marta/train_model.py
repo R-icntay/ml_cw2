@@ -201,7 +201,7 @@ def train_model(model, device, params, train_files, train_transforms, val_files,
                         
                         metric_aux(y_pred = val_aux_outputs, y = val_aux_labels)
                     else:
-                        metric_aux(y_pred = val_aux_outputs, y = inputs.permute(0, 1, 3, 4, 2))
+                        metric_aux(y_pred = val_aux_outputs, y = inputs.permute(0, 1, 3, 4, 2)) # Does this need to be deocllated?
                         
                 # Compute the average metric value across all iterations
                 main_metric = metric_main.aggregate().item()
