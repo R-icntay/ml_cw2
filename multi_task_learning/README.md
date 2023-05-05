@@ -36,4 +36,4 @@ The steps for creating, training and making inference for these models can be fo
 
 ![Multi-task learning 3D U-Net](images/architecture.png "Multi-task learning 3D U-Net")
 
-*Image credits: @martamasramon[https://github.com/Martamasramon]*
+*Image credits: (@martamasramon)[https://github.com/Martamasramon]*
