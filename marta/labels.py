@@ -21,12 +21,12 @@ def modify_labels(labels, organs):
             main_labels[main_labels == dict[organ]] = count_main
             count_main += 1.0
         else:
-            main_labels[main_labels != dict[organ]] = 0.0
+            main_labels[main_labels == dict[organ]] = 0.0
             
         if organ in aux:
             aux_labels[aux_labels == dict[organ]] = count_aux
             count_aux += 1.0
         else:
-            aux_labels[aux_labels != dict[organ]] = 0.0
+            aux_labels[aux_labels == dict[organ]] = 0.0
     
     return main_labels, aux_labels

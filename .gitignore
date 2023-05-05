@@ -153,6 +153,7 @@ cython_debug/
 
 # Ignore data folder
 data/
+models_old/
 models/
 
 #ignore output files

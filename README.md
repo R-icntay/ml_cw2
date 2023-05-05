@@ -3,6 +3,7 @@
 ## 1. Downloading the data
 1. Clone/download the code file
 2. Download the image dataset from https://zenodo.org/record/7013610#.ZEgRROzP23I
+3. (Optional) Download the trained models from ..... Store them in a folder named `models` inside the main folder that contains the code. 
 
 
 ## 2. Set up the environment

@@ -5,6 +5,7 @@ from monai.metrics              import DiceMetric, MSEMetric
 from monai.metrics.regression   import SSIMMetric
 from pathlib                    import Path
 from labels                     import modify_labels
+import matplotlib.pyplot as plt
 
 def set_data(val_files, val_transforms, BATCH_SIZE):
     """
@@ -61,7 +62,7 @@ def test_model(model, device, params, val_files, val_transforms, organs_dict, pr
     MODEL_NAME = model_name + ".pth"
     MODEL_SAVE_PATH = MODEL_PATH / MODEL_NAME
     
-    model.load_state_dict(torch.load(MODEL_SAVE_PATH))
+    model.load_state_dict(torch.load(MODEL_SAVE_PATH, map_location=device))
     model.eval()
 
     print("-" * 40)
@@ -75,7 +76,7 @@ def test_model(model, device, params, val_files, val_transforms, organs_dict, pr
             val_main_labels, val_aux_labels = modify_labels(val_labels, organs_dict)
 
             # Forward pass
-            val_main_outputs, val_aux_outputs = model(val_inputs)
+            val_main_outputs, val_aux_outputs = model(val_inputs)            
             val_main_outputs, val_aux_outputs = val_main_outputs.permute(0, 1, 3, 4, 2), val_aux_outputs.permute(0, 1, 3, 4, 2)
 
             # Transform main outputs and labels to calculate inference loss
@@ -84,11 +85,13 @@ def test_model(model, device, params, val_files, val_transforms, organs_dict, pr
 
             # Compute dice metric for current iteration
             metric_main(y_pred = val_main_outputs, y = val_main_labels)
+            
             if TASK == 'SEGMENT':
                 # Transform aux outputs and labels to calculate inference loss
                 val_aux_outputs     = [pred_aux(i) for i in decollate_batch(val_aux_outputs)]
                 val_aux_labels      = [label_aux(i) for i in decollate_batch(val_aux_labels)]
-            
+
+                # Compute dice metric for current iteration
                 metric_aux(y_pred = val_aux_outputs, y = val_aux_labels)
             else:
                 metric_aux(y_pred = val_aux_outputs, y = val_inputs.permute(0, 1, 3, 4, 2))
@@ -99,7 +102,6 @@ def test_model(model, device, params, val_files, val_transforms, organs_dict, pr
         
     print(
         f"\nMean dice for main task: {main_metric:.4f}"
-        f"\nMean metric for aux task: {aux_metric:.4f}"
         )
     
     save_results(MODEL_NAME, MODEL_PATH, main_metric, aux_metric)

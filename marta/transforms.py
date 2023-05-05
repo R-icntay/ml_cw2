@@ -84,9 +84,13 @@ def get_transforms():
     post_label_transform_main   = Compose([AsDiscrete(to_onehot = 3)])
 
     # Post transforms for the auxilliary prostate zones: 3 classes + background
-    post_pred_transform_aux     = Compose([AsDiscrete(argmax = True, to_onehot = 4)])
-    post_label_transform_aux    = Compose([AsDiscrete(to_onehot = 4)])
+    post_pred_transform_aux_3   = Compose([AsDiscrete(argmax = True, to_onehot = 4)])
+    post_label_transform_aux_3  = Compose([AsDiscrete(to_onehot = 4)])
+    
+    # Post transforms for the auxilliary prostate zones: 6 classes + background
+    post_pred_transform_aux_6   = Compose([AsDiscrete(argmax = True, to_onehot = 7)])
+    post_label_transform_aux_6  = Compose([AsDiscrete(to_onehot = 7)])
     
     print('Transforms have been defined.')
     
-    return train_transforms, val_transforms, post_pred_transform_main, post_label_transform_main, post_pred_transform_aux, post_label_transform_aux
+    return train_transforms, val_transforms, post_pred_transform_main, post_label_transform_main, post_pred_transform_aux_3, post_label_transform_aux_3, post_pred_transform_aux_6, post_label_transform_aux_6

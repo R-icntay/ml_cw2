@@ -53,7 +53,7 @@ def test_model_base(model, device, params, val_files, val_transforms, organs_dic
     MODEL_NAME = model_name + ".pth"
     MODEL_SAVE_PATH = MODEL_PATH / MODEL_NAME
     
-    model.load_state_dict(torch.load(MODEL_SAVE_PATH))
+    model.load_state_dict(torch.load(MODEL_SAVE_PATH, map_location=device))
     model.eval()
 
     print("-" * 40)
